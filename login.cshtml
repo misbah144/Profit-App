@@ -1,0 +1,136 @@
+﻿@model DAP.Models.UserLogin
+
+@{
+    ViewBag.Title = "Login DAP";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+ }
+
+<head>
+    <title>DAP Login</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <header style="width:100% ;height:15%">
+        &nbsp;
+        <p class="site-title" style="text-align:center">
+            Daily Accrual of Profit (DAP)
+        </p>
+        <div>&nbsp;</div>
+    </header>
+    <div style="width:100% ;height:75%">
+
+        <table style="width:100%">
+            <tr style="height:20%">
+                <td colspan="3">&nbsp;</td>
+            </tr>
+            <tr style="height:20%">
+                <td colspan="3">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="20%">
+                    &nbsp;
+                </td>
+                <td width="60%" align="center">
+
+                    <fieldset class="login">
+                        @using (Html.BeginForm("login", "Home", FormMethod.Post))
+                        {
+
+
+                            @Html.ValidationSummary(true)
+
+                            <table cellpadding="5" cellspacing="5">
+                                <tr>
+                                    <th colspan="3" align="center">Login Details</th>
+                                </tr>
+                                <tr>
+                                    <td>User Name: </td>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.username)
+                                    </td>
+                                    <td style="color: #FF0000">
+                                        @Html.ValidationMessageFor(m => m.username)
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Password: </td>
+                                    <td>
+                                        @Html.PasswordFor(m => m.password)
+                                        @* @Html.TextBoxFor(m => m.password)*@
+
+                                        @*//@Html.ValidationMessageFor(m => m.password)*@
+                                    </td>
+                                    <td>
+                                        @Html.ValidationMessageFor(m => m.password)
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Department: </td>
+                                    <td>
+                                        @*@Html.DropDownListFor(m => m.depertment, new List<SelectListItem>
+                                            { new SelectListItem{Text="FINANCE", Value="2"},
+                                              new SelectListItem{Text="IT", Value="1"}},
+                                              //new SelectListItem{Text="A+", Value="A+"},
+                                              //new SelectListItem{Text="AA", Value="AA"},
+                                              //new SelectListItem{Text="A", Value="A"},
+                                              //new SelectListItem{Text="   ", Value="NULL"}},
+                                              //new SelectListItem{Text="Canada", Value="Canada"}},
+                                              "Please select")*@
+
+                                        @*populating the list from db*@
+
+
+                                        @Html.DropDownListFor(m => m.depertment, new SelectList(Model.dept_list, "depertment_id", "depertment"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><input type="submit" value="Submit" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+
+                                        @if (Model.tcount != null)
+                                        {
+                                            <label style="color: #FF0000">Enter Correct UserName  and  Password</label>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                    </fieldset>
+                </td>
+                <td width="20%">
+                    &nbsp;
+                </td>
+
+            </tr>
+
+        </table>
+    </div>
+
+    <footer style="width:100% ">
+        <div class="content-wrapper" style="width:100% ;">
+            <div style="text-align:center;width:100%">
+                <p>&copy; @DateTime.Now.Year - Almeezan DAP Application</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+
+
+ @*@if (@ViewBag.ErrorMessage != null)  
+                {  
+  
+                    <label> @ViewBag.ErrorMessage</label>  
+                }*@ 

@@ -1,0 +1,317 @@
+﻿@model DAP.Models.Account_Type
+
+@{
+    ViewBag.Title = "account_type";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 550px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+  .col1Width
+    {
+        width: 160px;
+    }
+    .col2Width
+    {
+        width: 100px;
+    }
+ .col3Width
+    {
+        width: 10px;
+    }
+ .col4Width
+    {
+        width: 50px;
+    }
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var ACCTYPE_NAME = tr.find("#txt_typename").val();
+            var ACCTYPE_SHORTNAME = tr.find("#txt_shortname").val();
+            var ACCTYPE_STATUS = tr.find("#txt_type_status").val();
+            var ACCTYPE_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var ACCTYPE_ID = tr.find("#banktypeid").html();
+
+
+ //           ////////////////////////////////
+
+            if (ACCTYPE_NAME == "") 
+            {
+                alert("Name Required");
+                return false;
+            }
+            if (ACCTYPE_SHORTNAME == "") 
+            {
+                alert("Name Required");
+                return false;
+            }
+            if (ACCTYPE_STATUS == "" || (ACCTYPE_STATUS != "INACTIVE" && ACCTYPE_STATUS != "ACTIVE")) 
+            {
+                alert("Status  Required");
+                return false;
+            }
+            if (ACCTYPE_STATUS != "ACTIVE" && ACCTYPE_STATUS != "INACTIVE") {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+            if (ACCTYPE_ISDEFAULT == "") 
+            {
+                alert("IS DEFAULT  Required");
+                return false;
+            }
+
+            if (ACCTYPE_ISDEFAULT != "TRUE" && ACCTYPE_ISDEFAULT != "FALSE") {
+                alert("Kindly provide DEFAULT VALUE in correct format");
+                return false;
+            }
+
+
+
+
+
+
+
+
+//            /////////////////
+
+
+
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var Account_Type =
+            {
+                "ACCTYPE_ID": ACCTYPE_ID,
+                "ACCTYPE_NAME": ACCTYPE_NAME,
+                "ACCTYPE_SHORTNAME": ACCTYPE_SHORTNAME,
+                "ACCTYPE_STATUS": ACCTYPE_STATUS,
+                "ACCTYPE_ISDEFAULT": ACCTYPE_ISDEFAULT
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_account_type/',
+                data: JSON.stringify(Account_Type),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/account_type/';
+                
+                }
+            });
+
+        });
+    })
+</script>
+@*<h2>bank_type</h2>*@
+
+
+<h2>Account Type Setup</h2>
+
+<div align="center"> 
+@using (Html.BeginForm("account_type", "Home", FormMethod.Post))
+    {
+     <table>
+            <tr>
+                <th>  
+    
+    
+      <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.ACCTYPE_NAME)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_NAME)
+            </td>
+            
+            </tr>
+            <tr>
+                <td align="left">Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.ACCTYPE_SHORTNAME)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_SHORTNAME)
+            </td>
+            </tr>
+       <tr>
+                <td align="left">Status: </td>
+               <td align="left">
+                    @Html.DropDownListFor(m => m.ACCTYPE_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                     )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_STATUS)
+            </td>            
+            </tr>            
+               @*<tr>
+                <td>Rating Status: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.rating_status)
+                </td>
+            </tr>*@
+            <tr>
+                <td align="left">Is Default: </td>
+                 <td align="left">                    
+                  @Html.CheckBoxFor(m =>m.ACCTYPE_ISDEFAULT_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+               <td colspan="2" align="left"><input type="submit" value="ADD" />
+               <input type="button" value="Clear" onclick="location.href='@Url.Action("account_type", "Home")'" />
+               </td>
+            </tr>
+        </table>
+        
+        </th>
+      </tr>
+        </table>
+
+
+
+    }
+
+</div>
+
+
+
+@{
+    var grid = new WebGrid(Model.account_type_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+      grid.Column("ACCTYPE_ID","ID" ,format: @<text>  <span  class="display-mode">@item.ACCTYPE_ID</span> <label id="banktypeid" class="edit-mode">@item.ACCTYPE_ID</label> </text>, style: "col3Width" ),
+     grid.Column("ACCTYPE_NAME", "Name", format: @<text>  <span  class="display-mode"> <label id="lbl_type_name"  >@item.ACCTYPE_NAME</label> </span> <input type="text" id="txt_typename" value="@item.ACCTYPE_NAME" class="edit-mode" /></text>, style: "col2Width"),
+     grid.Column("ACCTYPE_SHORTNAME", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbl_shortname">@item.ACCTYPE_SHORTNAME</label> </span>  <input type="text" id="txt_shortname" value="@item.ACCTYPE_SHORTNAME" class="edit-mode" /> </text>, style: "col2Width"),
+    grid.Column("ACCTYPE_STATUS_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_typestatus">@item.ACCTYPE_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_type_status" class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@  
+
+    <select class="edit-mode" id="txt_type_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+    
+    </text>, style: "col2Width"),
+
+
+       grid.Column("ACCTYPE_ISDEFAULT", "Is Default", format: @<text> <span  class="display-mode"> <label id="lbl_default">@item.ACCTYPE_ISDEFAULT</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+    
+       @*<input list="colors1"  id="txt_type_isdefault"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+
+    <select class="edit-mode" id="txt_type_isdefault">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select> 
+    </text>, style: "col2Width"),
+
+       grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+
+<div align="center">
+@using (Html.BeginForm("ExportData_account_type", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

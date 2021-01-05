@@ -1,0 +1,295 @@
+﻿@model DAP.Models.ProfitBasis_Setup
+
+@{
+    ViewBag.Title = "profitbasis_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var PBAS_NAME = tr.find("#txt_typename").val();
+            var PBAS_SHORTNAME = tr.find("#txt_shortname").val();
+            var PBAS_STATUS = tr.find("#txt_type_status").val();
+            var PBAS_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var PBAS_ID = tr.find("#banktypeid").html();
+
+            ///////////////////////
+
+            if (PBAS_NAME == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (PBAS_SHORTNAME == "") {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (PBAS_STATUS == "") {
+                alert("Status Required");
+                return false;
+            }
+
+            if (PBAS_STATUS != "ACTIVE" && PBAS_STATUS != "INACTIVE") {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+
+            if (PBAS_ISDEFAULT == "") 
+            {
+                alert("IS DEFAULT Required");
+                return false;
+            }
+
+            if (PBAS_ISDEFAULT != "TRUE" && PBAS_ISDEFAULT != "FALSE") 
+            {
+                alert("Kindly provide  Value in correct format");
+                return false;
+            }
+
+
+
+
+            /////////////////////////////
+
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var ProfitBasis_Setup =
+            {
+                "PBAS_ID": PBAS_ID,
+                "PBAS_NAME": PBAS_NAME,
+                "PBAS_SHORTNAME": PBAS_SHORTNAME,
+                "PBAS_STATUS": PBAS_STATUS,
+                "PBAS_ISDEFAULT": PBAS_ISDEFAULT
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_profitbasis/',
+                data: JSON.stringify(ProfitBasis_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/profitbasis_setup/';
+
+                }
+            });
+
+        });
+    })
+</script>
+
+
+<h2>Profit Basis Setup</h2>
+<div align="center"> 
+@using (Html.BeginForm("profitbasis_setup", "Home", FormMethod.Post))
+    {
+     <table>
+            <tr>
+                <th>   
+    
+    <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.PBAS_NAME)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.PBAS_NAME)
+            </td>
+            
+            </tr>
+            <tr>
+                <td align="left">Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.PBAS_SHORTNAME)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.PBAS_SHORTNAME)
+            </td>
+            </tr>
+       <tr>
+                <td align="left">Status: </td>
+                <td align="left">
+                    @Html.DropDownListFor(m => m.PBAS_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                     )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PBAS_STATUS)
+            </td>            
+            </tr>            
+               @*<tr>
+                <td>Rating Status: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.rating_status)
+                </td>
+            </tr>*@
+            <tr>
+                <td align="left">Is default: </td>
+                <td align="left">                  
+                  @Html.CheckBoxFor(m =>m.PBAS_ISDEFAULT_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td colspan="2" align="left"><input type="submit" value="Save" />
+                <input type="button" value="Clear" onclick="location.href='@Url.Action("profitbasis_setup", "Home")'"/>
+                </td>
+            </tr>
+        </table>
+   
+      </th>
+      </tr>
+        </table>
+    
+    }
+
+</div>
+
+
+
+@{
+    var grid = new WebGrid(Model.profit_basis_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+ grid.Column("PBAS_ID","ID", format: @<text>  <span  class="display-mode">@item.PBAS_ID</span> <label id="banktypeid" class="edit-mode">@item.PBAS_ID</label> </text>, style: "col1Width" ),
+ grid.Column("PBAS_NAME", " Name", format: @<text>  <span  class="display-mode"> <label id="lbl_type_name"  >@item.PBAS_NAME</label> </span> <input type="text" id="txt_typename" value="@item.PBAS_NAME" class="edit-mode" /></text>, style: "col2Width"),
+ grid.Column("PBAS_SHORTNAME", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbl_shortname">@item.PBAS_SHORTNAME</label> </span>  <input type="text" id="txt_shortname" value="@item.PBAS_SHORTNAME" class="edit-mode" /> </text>, style: "col2Width"),
+ grid.Column("PBAS_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_typestatus">@item.PBAS_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_type_status" class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@  
+    <select class="edit-mode" id="txt_type_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+    </text>, style: "col2Width"),
+
+
+  grid.Column("PBAS_ISDEFAULT", "Is Default", format: @<text> <span  class="display-mode"> <label id="lbl_default">@item.PBAS_ISDEFAULT</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       @*<input list="colors1"  id="txt_type_isdefault" class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+    <select class="edit-mode" id="txt_type_isdefault">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select> 
+    </text>, style: "col2Width"),
+
+  grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+<div align="center">
+@using (Html.BeginForm("ExportData_profitbasis_setup", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

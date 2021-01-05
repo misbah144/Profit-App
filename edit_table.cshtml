@@ -1,0 +1,189 @@
+﻿
+@*@model dynamic*@
+@using DAP.Models;
+
+@model DAP.Models.UserModel
+
+
+@*@model List<EditableWebgrid.Models.UserModel> *@
+
+
+@{
+    ViewBag.Title = "Bank Setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var bankname = tr.find("#FirstName").val();
+            var shortname = tr.find("#LastName").val();
+            var rating = tr.find("#rating").val();           
+            var bankid = tr.find("#bankid").html();
+            
+            tr.find("#lblbankname").text(FirstName);
+            tr.find("#lblshortname").text(LastName);
+            tr.find("#lblrating").text(rating);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var UserModel =
+            {
+                "bankid": bankid,
+                "bankname": bankname,
+                "shortname": shortname,
+                "rating": rating
+            };
+            $.ajax({
+                url: '/DAP/Home/ChangeUser/',
+                data: JSON.stringify(UserModel),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                }
+            });
+
+        });
+    })
+</script>
+
+<div align="center">          
+
+<h2>Bank Setup</h2>
+
+@using (Html.BeginForm("insert_bank", "Home", FormMethod.Post))
+    {
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <th colspan="2" align="center">Add Bank Details</th>
+            </tr>
+            <tr>
+                <td>Bank Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.bankname)
+                </td>
+            </tr>
+            <tr>
+                <td>Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.shortname)
+                </td>
+            </tr>
+            
+          @*  <tr>
+                <td>UsernameName: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.username)
+                </td>
+            </tr>*@
+
+            
+            <tr>
+                <td>Rating: </td>
+                <td>
+                 @Html.DropDownListFor(m => m.rating, new SelectList(Model.r_list, "rating_id", "rating"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                 
+                   @* @Html.DropDownListFor(m => m.rating, new List<SelectListItem>
+                   { new SelectListItem{Text="AAA", Value="AAA"},
+                     new SelectListItem{Text="AA+", Value="AA+"},
+                     new SelectListItem{Text="A+", Value="A+"},
+                     new SelectListItem{Text="AA", Value="AA"},
+                     new SelectListItem{Text="A", Value="A"},
+                     new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                     "Please select")*@
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+        </table>
+    }
+
+</div>
+
+@{
+    var grid = new WebGrid(Model.ulist, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+            grid.Columns(
+             grid.Column("bankid", format: @<text>  <span  class="display-mode">@item.bankid </span> <label id="bankid" class="edit-mode">@item.bankid</label> </text>, style: "col1Width" ),
+             grid.Column("bankname", "Bank Name", format: @<text>  <span  class="display-mode"> <label id="lblbankname"  >@item.bankname</label> </span> <input type="text" id="FirstName" value="@item.bankname" class="edit-mode" /></text>, style: "col2Width"),
+             grid.Column("shortname", "Short Name", format: @<text> <span  class="display-mode"> <label id="lblshortname">@item.shortname</label> </span>  <input type="text" id="LastName" value="@item.shortname" class="edit-mode" /> </text>, style: "col2Width"),
+             grid.Column("rating", "Rating", format: @<text> <span  class="display-mode"> <label id="lblrating">@item.rating</label> </span>  <input type="text" id="rating" value="@item.rating" class="edit-mode" /> </text>, style: "col2Width"),
+             grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>

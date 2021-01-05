@@ -1,0 +1,743 @@
+﻿@model DAP.Models.Fundbankaccount_Setup
+
+@{
+    ViewBag.Title = "fundbankaccount_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style type="text/css">
+    .edit-mode
+    {    
+    font-size: 8px;
+    width:60px;        
+    font-family: Arial,Helvetica,sans-serif;
+    }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .displaywidth-mode
+    {
+     
+     width:50px;   
+        
+    }
+    .cancel-user{}
+    .webgrid-table
+    {        
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 8px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+       
+        background-color: #E3E3E3;
+        color: black;
+        text-align: center;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+    .nodisplay {
+        display: none;
+    }
+
+
+</style>
+<script type="text/javascript" >
+
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+
+//        $("#post_button").on('click', function () {
+//            //            $("#comp_name").val($(this).find("option:selected").text());
+
+//          //  var a = document.getElementById("cdate");
+//            //        var strUser = e.options[e.selectedIndex].value;
+//            var va = Date.parse(document.getElementsById('cdate').value);
+//            
+//           // document.getElementsById('cdate').value;
+
+//           // var b = document.getElementById("opdate");
+//            //        var strUser = e.options[e.selectedIndex].value;
+//            var vb = Date.parse(document.getElementsById('OPdate').value);
+
+//        //    var dc = new Date(va);
+//        //    var dp = new Date(vb);
+
+//            if (vb > va) 
+//            {
+//                alert("Kindly provide correct opening date");
+//              //  return false;            
+//            }
+
+////            $("#comp_name").val(va);
+////            $("#fund_name_short").val(vb);
+
+//        });
+
+
+        $('.save-user').on('click', function () {
+
+            var tr = $(this).parents('tr:first');
+            var FBACC_ID = tr.find("#bankid").html();
+            var FBACC_NUMBER = tr.find("#txt_FBACC_NUMBER").val();
+            var FBACC_TITLE = tr.find("#txt_FBACC_TITLE").val();
+            var FBACC_STATUS = tr.find("#txt_status").val();
+            var FUND_ID = tr.find("#txt_fund_name").val();
+            var FBACC_COMPID = tr.find("#txt_company_id").val();
+            var BANK_ID = tr.find("#txt_bank_name").val();
+            var BBR_ID = tr.find("#txt_branch_name").val();
+            var ACCTYPE_ID = tr.find("#txt_acctype_name").val();
+            var ACCPUR_ID = tr.find("#txt_accpur_name").val();
+            var PBAS_ID = tr.find("#txt_pbas_name").val();
+            var PFRQ_ID = tr.find("#txt_pfrq_name").val();
+            var FBACC_TCREDITACCOUNT = tr.find("#txt_FBACC_TCREDITACCOUNT").val();
+            var FBACC_TDEBITACCOUNT = tr.find("#txt_FBACC_TDEBITACCOUNT").val();
+            var FBACC__ISPOOLED = tr.find("#txt_FBACC__ISPOOLED").val();
+            var FBACC_ISCLOSED = tr.find("#txt_FBACC_ISCLOSED").val();
+            var FBACC_CLOSINGDATE = tr.find("#txt_FBACC_CLOSINGDATE").val();
+            var FBACC_OPENINGDATE = tr.find("#txt_FBACC_OPENINGDATE").val();
+            var SLAB_ID = tr.find("#txt_slab_name").val();
+
+
+
+            //                var BANK_CONTACTPERSONNAME = tr.find("#txt_personname").val();
+            //            var BANK_CONTACTPERSONMOBILE = tr.find("#txt_personmobile").val();
+            //            var BANK_CONTACTPERSONEMAIL = tr.find("#txt_personemail").val();
+
+
+            ///////////////////////
+
+            if (FBACC_NUMBER == "") {
+                alert("Number  Required");
+                return false;
+            }
+            if (FBACC_TITLE == "") {
+                alert("Title Required");
+                return false;
+            }
+            if (FBACC_STATUS == "" || (FBACC_STATUS != "INACTIVE" && FBACC_STATUS != "ACTIVE")) 
+            {
+                alert("Status  Required");
+                return false;
+            }
+
+            if (FBACC_STATUS != "ACTIVE" && FBACC_STATUS != "INACTIVE") {
+                alert("Status  Required In Correct Format");
+                return false;
+            }
+
+
+            var re_cd = /^[1-9][0-9]{1,9}$/;
+
+
+            if (re_cd.test(String(FBACC_TCREDITACCOUNT).toLowerCase()) == false) 
+            {
+                alert("Required Correct C AMOUNT");
+                return false;
+            }
+
+            if (re_cd.test(String(FBACC_TDEBITACCOUNT).toLowerCase()) == false) {
+                alert("Required Correct D AMOUNT");
+                return false;
+            }
+
+
+            if ((Date.parse(FBACC_OPENINGDATE)) > (Date.parse(FBACC_CLOSINGDATE)))
+            {
+                alert("provide corect date");
+                return false;
+            }
+          
+            if (FBACC__ISPOOLED == "") {
+                alert("IS POOLED Required");
+                return false;
+            }
+
+            if (FBACC__ISPOOLED != "TRUE" && FBACC__ISPOOLED != "FALSE" && FBACC__ISPOOLED != "False" && FBACC__ISPOOLED != "True") {
+                alert("Kindly provide Value in correct format");
+                return false;
+            }
+                
+            if (FBACC_ISCLOSED == "") {
+                alert("IS CLOSED Required");
+                return false;
+            }
+            if (FBACC_ISCLOSED != "TRUE" && FBACC_ISCLOSED != "FALSE" && FBACC_ISCLOSED != "False" && FBACC_ISCLOSED != "True") {
+                alert("Kindly provide Value in correct format");
+                return false;
+            }
+
+
+
+            /////////////////////////////
+
+            tr.find("#lbl_FBACC_NUMBER").text(txt_FBACC_NUMBER);
+            tr.find("#lbl_FBACC_TITLE").text(txt_FBACC_TITLE);
+            tr.find("#lbl_status").text(txt_status);
+            tr.find("#lbl_fund_name").text(txt_fund_name);
+            tr.find("#lbl_company_id").text(txt_company_id);
+            tr.find("#lbl_bank_name").text(txt_bank_name);
+            tr.find("#lbl_branch_name").text(txt_branch_name);
+            tr.find("#lbl_acctype_name").text(txt_acctype_name);
+            tr.find("#lbl_accpur_name").text(txt_accpur_name);
+            tr.find("#lbl_pbas_name").text(txt_pbas_name);
+            tr.find("#lbl_pfrq_name").text(txt_pfrq_name);
+            tr.find("#lbl_FBACC_TCREDITACCOUNT").text(txt_FBACC_TCREDITACCOUNT);
+            tr.find("#lbl_FBACC_TDEBITACCOUNT").text(txt_FBACC_TDEBITACCOUNT);
+            tr.find("#lbl_FBACC__ISPOOLED").text(txt_FBACC__ISPOOLED);
+            tr.find("#lbl_FBACC_ISCLOSED").text(txt_FBACC_ISCLOSED);
+            tr.find("#lbl_FBACC_CLOSINGDATE").text(txt_FBACC_CLOSINGDATE);
+            tr.find("#lbl_FBACC_OPENINGDATE").text(txt_FBACC_OPENINGDATE);
+            tr.find("#lbl_slab_name").text(txt_slab_name);
+            //            tr.find("#lbl_personemail").text(txt_personemail);
+            //            tr.find("#lbl_personmobile").text(txt_personmobile);
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var Fundbankaccount_Setup =
+            {
+                "FBACC_ID": FBACC_ID,
+                "FBACC_NUMBER": FBACC_NUMBER,
+                "FBACC_TITLE": FBACC_TITLE,
+                "FBACC_STATUS": FBACC_STATUS,
+                "FUND_ID": FUND_ID,
+                "FBACC_COMPID": FBACC_COMPID,
+                //                "BANK_STATUS": BANK_STATUS,
+                "BANK_ID": BANK_ID,
+                "BBR_ID": BBR_ID,
+                "ACCTYPE_ID": ACCTYPE_ID,
+                "ACCPUR_ID": ACCPUR_ID,
+                "PBAS_ID": PBAS_ID,
+                "PFRQ_ID": PFRQ_ID,
+                "FBACC_TCREDITACCOUNT": FBACC_TCREDITACCOUNT,
+                "FBACC_TDEBITACCOUNT": FBACC_TDEBITACCOUNT,
+                "FBACC__ISPOOLED": FBACC__ISPOOLED,
+                "FBACC_ISCLOSED": FBACC_ISCLOSED,
+                "FBACC_CLOSINGDATE": FBACC_CLOSINGDATE,
+                "FBACC_OPENINGDATE": FBACC_OPENINGDATE,
+                "SLAB_ID":SLAB_ID
+
+                //                
+                //"BANK_CONTACTPERSONMOBILE": BANK_CONTACTPERSONMOBILE,
+                //                "BANK_CONTACTPERSONEMAIL": BANK_CONTACTPERSONEMAIL
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_fundbankaccount/',
+                data: JSON.stringify(Fundbankaccount_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/fundbankaccount_setup/';
+                }
+            });
+
+        });
+    })
+
+
+</script>
+
+
+
+<h2>Fund Bank Account Setup</h2>
+<div align="center" > 
+@using (Html.BeginForm("fundbankaccount_setup", "Home", FormMethod.Post))
+    {
+      @Html.ValidationSummary(true) 
+    
+     <table>
+      <tr>
+       <th>  
+    
+    
+        <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="8" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Fund Name: </td>
+               <td align="left">               
+                 @* @Html.CheckBoxFor(m =>m.BNKTYPE_ID, true)    *@              
+                 @*   @Html.TextBoxFor(m =>m.BNKTYPE_ID)*@
+               @Html.DropDownListFor(m => m.FUND_ID, new SelectList(Model.fund_list, "FUND_ID", " FUND_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+               
+                </td>
+          @*  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.FUND_ID)
+            </td>
+           
+           <td align="left">Pbas Name: </td>
+                <td align="left">
+                   @Html.DropDownListFor(m => m.PBAS_ID, new SelectList(Model.pbas_list, "PBAS_ID", "PBAS_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PBAS_ID)
+            </td>
+            </tr>
+            
+            <tr>
+                <td align="left">Company Name: </td>
+                <td align="left">                                 
+                @*    @Html.TextBoxFor(m =>m.RATING_ID)*@
+               
+               @Html.DropDownListFor(m => m.FBACC_COMPID, new SelectList(Model.fund_list, "FBACC_COMPID", " FUND_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+           @*  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.FBACC_COMPID)
+            </td>
+
+           
+           <td align="left">Pfrq Name: </td>
+               <td align="left">
+                   @Html.DropDownListFor(m => m.PFRQ_ID, new SelectList(Model.pfrq_list, "PFRQ_ID", "PFRQ_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PFRQ_ID)
+            </td>
+            
+            </tr>
+
+            <tr>
+                <td align="left">Bank Name: </td>
+               <td align="left">                                  
+                    @*@Html.TextBoxFor(m =>m.CITY_ID)*@
+                @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                
+                </td>
+
+               @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BANK_ID)
+            </td>           
+           <td align="left">Closing Date: </td>
+              <td align="left">                  
+                     @Html.EditorFor(model => model.Closing_Date, new { htmlAttributes = new {id = "cdate", @class = "form-control" } }) 
+                   @* @Html.TextBoxFor(m => m.FBACC_CLOSINGDATE)*@           @*needs to perform some action in insert and update function*@ 
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.Closing_Date)
+            </td>
+           </tr>
+
+            <tr>
+                <td align="left">Branch Name: </td>
+               <td align="left">                                
+                  @*  @Html.TextBoxFor(m =>m.STATE_ID)*@
+                
+                 @Html.DropDownListFor(m => m.BBR_ID, new SelectList(Model.branch_list, "BBR_ID", "BBR_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+           @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_ID)
+            </td>
+
+           
+           <td align="left">Opening Date: </td>
+               <td align="left">        
+                   
+                   @Html.EditorFor(model => model.Opening_Date, new { htmlAttributes = new { id = "opdate", @class = "form-control" } })   
+                  @*  @Html.TextBoxFor(m => m.FBACC_OPENINGDATE)*@       @*needs to perform some action in insert and update function*@ 
+                </td>        
+                <td style="color: #FF0000">*                            
+             @Html.ValidationMessageFor(m=>m.Opening_Date)
+          @*  @Html.ValidationMessageFor(m=>m.checkdate)*@
+            </td>
+     </tr>
+
+            <tr>
+                 <td align="left">Account Type Name: </td>
+             <td align="left">                                
+                  
+                 @Html.DropDownListFor(m => m.ACCTYPE_ID, new SelectList(Model.acctype_list, "ACCTYPE_ID", "ACCTYPE_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+               </td>
+               
+              @*  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_ID)
+            </td> 
+         @*  <td style="color: #FF0000">
+           @Html.ValidationMessageFor(m=>m.Bank_Code)
+            </td>*@
+           
+           <td align="left">Account Purpose Name: </td>                @*needs some correction for accu_purname*@
+                <td align="left">
+                   @Html.DropDownListFor(m => m.ACCPUR_ID, new SelectList(Model.accpur_list, "ACCPUR_ID", "ACCPUR_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCPUR_ID)
+            </td>
+            
+            </tr>
+
+            <tr>
+                <td align="left">Number: </td>
+                <td align="left">
+                    @Html.TextBoxFor(m => m.FBACC_NUMBER)
+                </td>
+          @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.FBACC_NUMBER)
+            </td>
+           
+           <td align="left">Credit: </td>
+                <td align="left">
+                    @Html.TextBoxFor(m => m.FBACC_TCREDITACCOUNT)
+                </td>                              
+             <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.FBACC_TCREDITACCOUNT)
+            </td>                        
+            </tr>
+            <tr>
+                <td align="left">Title: </td>
+                <td align="left">
+                    @Html.TextBoxFor(m => m.FBACC_TITLE)
+                </td>
+           @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+            <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.FBACC_TITLE)
+            </td>
+           
+           <td align="left">Debit </td>
+                <td>
+                    @Html.TextBoxFor(m => m.FBACC_TDEBITACCOUNT)
+                </td>                           
+           <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.FBACC_TDEBITACCOUNT)
+            </td>
+
+
+            
+            </tr>
+       <tr>
+                <td align="left">Status: </td>
+                 <td align="left">
+                    @Html.DropDownListFor(m => m.FBACC_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     )
+                </td>
+          @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.FBACC_STATUS)
+            </td>
+
+           <td align="left">Is Pooled: </td>
+              
+                
+                <td align="left">            
+                  @Html.CheckBoxFor(m =>m.FBACC__ISPOOLED_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+           
+        @*   <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.BANK_EMAIL)
+            </td>*@
+           
+            </tr>            
+               
+            
+            
+            <tr>
+             <td align="left">Is Closed: </td>
+                <td align="left">             
+                  @Html.CheckBoxFor(m =>m.FBACC_ISCLOSED_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+                <td style="color: #FF0000">
+
+                    @*@Html.ValidationMessageFor(m => m.FBACC_ISCLOSED_BOOL)*@
+                </td>
+                
+                
+                <td align="left">Slab Name: </td>                @*needs some correction for accu_purname*@
+                <td align="left">
+                    @Html.DropDownListFor(m =>m.SLAB_ID, new SelectList(Model.slab_list, "SLAB_ID", "SLAB_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+                <td style="color: #FF0000">
+                    @Html.ValidationMessageFor(m =>m.SLAB_ID)
+                </td>
+       
+                   @*   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+             
+             
+               @* <td>ACCTOUNT TYPE NAME: </td>
+             <td align="left">                                
+                  
+                 @Html.DropDownListFor(m => m.ACCTYPE_ID, new SelectList(Model.acctype_list, "ACCTYPE_ID", "ACCTYPE_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+               
+               
+               
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_ID)
+            </td>     *@                 
+           </tr>
+                        
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                @*<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>*@
+                <td colspan="5" align="center"><input type="submit" value="ADD" id="post_button" />
+                <input type="button" value="CLEAR" onclick="location.href='@Url.Action("fundbankaccount_setup", "Home")'"/>
+                </td>
+            </tr>
+        </table>
+     </th>
+      </tr>
+        </table>
+    
+
+
+
+    }
+
+</div>
+
+<table>
+<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+</table>
+
+
+@{
+    var grid = new WebGrid(Model.fundbankaccount_setup_list, rowsPerPage: 50);
+}
+<div id="gridContent" align="left"  >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+      grid.Column("ID", format: @<text><span  class="display-mode">@item.FBACC_ID</span> <label id="bankid" class="edit-mode">@item.FBACC_ID</label> </text>, style: "col1Width"),
+     grid.Column("FBACC_NUMBER", "Number", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_FBACC_NUMBER"   >@item.FBACC_NUMBER</label> </span> <input type="text" id="txt_FBACC_NUMBER" value="@item.FBACC_NUMBER" class="edit-mode" /></text>, style: "col1Width"),
+        grid.Column("FBACC_TITLE", "Title", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_TITLE">@item.FBACC_TITLE</label> </span>  <input type="text" id="txt_FBACC_TITLE" value="@item.FBACC_TITLE" class="edit-mode" /> </text>, style: "col1Width"),
+        grid.Column("FBACC_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_status">@item.FBACC_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_status"  class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@  
+    <span class="nodisplay"> <label id="lbl_status_INDEX">@item.FBACC_STATUS</label> </span>
+    <select class="edit-mode" id="txt_status">
+    <option selected="selected">
+           @item.FBACC_STATUS
+        </option>
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+    </text>, style: "col1Width"),
+@*grid.Column("Bank_Code", "CODE", format: @<text> <span  class="display-mode"> <label id="lbl_code">@item.Bank_Code</label> </span>  <input type="text" id="txt_code" value="@item.Bank_Code" class="edit-mode" /> </text>, style: "col1Width"),*@
+
+@*grid.Column("FUND_NAME", "Name", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_name"   >@item.FUND_NAME</label> </span> <input type="text" id="txt_name" value="@item.FUND_NAME" class="edit-mode" /></text>, style: "col1Width"),*@
+
+grid.Column("FUND_NAME", "Fund Name", format: @<text> <span  class="display-mode"> <label id="lbl_fund_name">@item.FUND_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_fund_name_INDEX">@item.FUND_ID</label> </span>
+@Html.DropDownListFor(m => m.FUND_ID, new SelectList(Model.fund_list, "FUND_ID", "FUND_NAME", @item.FUND_ID), new { id = "txt_fund_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+
+grid.Column("FUND_NAME", "Company Name", format: @<text> <span  class="display-mode"> <label id="lbl_company_id">@item.FUND_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_company_INDEX">@item.FBACC_COMPID</label> </span>
+
+@Html.DropDownListFor(m => m.FBACC_COMPID, new SelectList(Model.fund_list, "FBACC_COMPID", "FUND_NAME",@item.FBACC_COMPID), new { id = "txt_company_id", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+
+
+
+grid.Column("BANK_NAME", "BANK NAME", format: @<text> <span  class="display-mode"> <label id="lbl_bank_name">@item.BANK_NAME</label> </span>  
+    <span class="nodisplay"> <label id="lbl_bank_name_INDEX">@item.BANK_ID</label> </span>
+
+  
+@Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME",@item.BANK_ID), new { id = "txt_bank_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("BBR_NAME", "BRANCH NAME", format: @<text> <span  class="display-mode"> <label id="lbl_branch_name">@item.BBR_NAME</label> </span>  
+    <span class="nodisplay"> <label id="lbl_branch_name_INDEX">@item.BBR_ID</label> </span>
+  
+  @Html.DropDownListFor(m => m.BBR_ID, new SelectList(Model.branch_list,"BBR_ID","BBR_NAME",@item.BBR_ID), new { id = "txt_branch_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("ACCTYPE_NAME", "ACCOUNT TYPE NAME", format: @<text> <span  class="display-mode"> <label id="lbl_acctype_name">@item.ACCTYPE_NAME</label> </span>  
+ <span class="nodisplay"> <label id="lbl_acctype_name_INDEX">@item.ACCTYPE_ID</label> </span>
+   @Html.DropDownListFor(m => m.ACCTYPE_ID, new SelectList(Model.acctype_list,"ACCTYPE_ID","ACCTYPE_NAME",@item.ACCTYPE_ID),new { id="txt_acctype_name", @class="edit-mode"})
+</text>, style: "col1Width"),
+
+grid.Column("ACCPUR_NAME", "ACCOUNT PURPOSE NAME", format: @<text> <span  class="display-mode"> <label id="lbl_accpur_name">@item.ACCPUR_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_accpur_name_INDEX">@item.ACCPUR_ID</label> </span>
+@Html.DropDownListFor(m => m.ACCPUR_ID, new SelectList(Model.accpur_list, "ACCPUR_ID", "ACCPUR_NAME", @item.ACCPUR_ID), new { id = "txt_accpur_name", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+grid.Column("PBAS_NAME","PBAS NAME", format: @<text> <span  class="display-mode"> <label id="lbl_pbas_name">@item.PBAS_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_pbas_name_INDEX">@item.PBAS_ID</label> </span>
+  
+@Html.DropDownListFor(m => m.PBAS_ID, new SelectList(Model.pbas_list,"PBAS_ID","PBAS_NAME",@item.PBAS_ID), new {id="txt_pbas_name", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+grid.Column("PFRQ_NAME", "PFRQ NAME", format: @<text> <span  class="display-mode"> <label id="lbl_pfrq_name">@item.PFRQ_NAME</label> </span>  
+
+<span class="nodisplay"> <label id="lbl_pfrq_name_INDEX">@item.PFRQ_ID</label> </span>
+@Html.DropDownListFor(m => m.PFRQ_ID, new SelectList(Model.pfrq_list, "PFRQ_ID", "PFRQ_NAME", @item.PFRQ_ID), new { id = "txt_pfrq_name", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+grid.Column("SLAB_NAME", "SLAB NAME", format: @<text> <span  class="display-mode"> <label id="lbl_slab_name">@item.SLAB_NAME</label> </span>  
+
+<span class="nodisplay"> <label id="lbl_slab_name_INDEX">@item.SLAB_ID</label> </span>
+@Html.DropDownListFor(m => m.SLAB_ID, new SelectList(Model.slab_list, "SLAB_ID", "SLAB_NAME", @item.SLAB_ID), new { id = "txt_slab_name", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+
+
+
+
+
+
+grid.Column("FBACC_TCREDITACCOUNT", "CREDIT", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_TCREDITACCOUNT">@item.FBACC_TCREDITACCOUNT</label> </span>  <input type="text" id="txt_FBACC_TCREDITACCOUNT" value="@item.FBACC_TCREDITACCOUNT" class="edit-mode" /> </text>, style: "col1Width"),
+grid.Column("FBACC_TDEBITACCOUNT", "DEDIT", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_TDEBITACCOUNT">@item.FBACC_TDEBITACCOUNT</label> </span>  <input type="text" id="txt_FBACC_TDEBITACCOUNT" value="@item.FBACC_TDEBITACCOUNT" class="edit-mode" /> </text>, style: "col1Width"),
+
+     grid.Column("FBACC__ISPOOLED", "IS POOLED", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC__ISPOOLED">@item.FBACC__ISPOOLED</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       @*<input list="colors1"  id="txt_FBACC__ISPOOLED"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+  
+    <span class="nodisplay"> <label id="lbl_FBACC__ISPOOLED_INDEX">@item.FBACC__ISPOOLED</label> </span>
+    
+      <select class="edit-mode" id="txt_FBACC__ISPOOLED">
+          <option selected="selected">
+            @item.FBACC__ISPOOLED
+          </option>
+          <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select>
+
+    </text>, style: "col2Width"),
+
+         grid.Column("FBACC_ISCLOSED", "IS CLOSED", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_ISCLOSED">@item.FBACC_ISCLOSED</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       @*<input list="colors1"  id="txt_FBACC_ISCLOSED"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+    <span class="nodisplay"> <label id="lbl_FBACC_ISCLOSED_INDEX">@item.FBACC_ISCLOSED</label> </span>
+    
+    
+    <select class="edit-mode" id="txt_FBACC_ISCLOSED">
+        <option selected="selected">
+           @item.FBACC_ISCLOSED
+        </option>
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select>
+    
+    </text>, style: "col2Width"),
+
+ grid.Column("FBACC_CLOSINGDATE", "CLOSING DATE", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_CLOSINGDATE">@item.FBACC_CLOSINGDATE</label> </span>  
+ @*<input type="text" id="txt_FBACC_CLOSINGDATE"  value="@item.FBACC_CLOSINGDATE" class="edit-mode" /> *@
+ <input type="date" id="txt_FBACC_CLOSINGDATE" value="@item.FBACC_CLOSINGDATE" class="edit-mode"  / >
+ </text>, style: "col1Width"),
+
+
+ grid.Column("FBACC_OPENINGDATE", "OPENING DATE", format: @<text> <span  class="display-mode"> <label id="lbl_FBACC_OPENINGDATE">@item.FBACC_OPENINGDATE</label> </span>  
+ @*<input type="text" id="txt_FBACC_OPENINGDATE" value="@item.FBACC_OPENINGDATE" class="edit-mode" /> *@
+ <input type="date" id="txt_FBACC_OPENINGDATE" value="@item.FBACC_OPENINGDATE" class="edit-mode"  / >
+ </text>, style: "col1Width"),
+ 
+
+
+          //works needs to Be done
+
+   @* grid.Column("BANK_PHONES", "PHONE#", format: @<text> <span  class="display-mode"> <label id="lbl_bankphone">@item.BANK_PHONES</label> </span>  <input type="text" id="txt_bankphone" value="@item.BANK_PHONES" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("BANK_FAX", "FAX#", format: @<text> <span  class="display-mode"> <label id="lbl_bankfax">@item.BANK_FAX</label> </span>  <input type="text" id="txt_bankfax" value="@item.BANK_FAX" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("BANK_EMAIL", "EMAIL", format: @<text> <span  class="display-mode"> <label id="lbl_bankemail">@item.BANK_EMAIL</label> </span>  <input type="text" id="txt_bankemail" value="@item.BANK_EMAIL" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("BANK_WEBSITE", "WEBSITE", format: @<text> <span  class="display-mode"> <label id="lbl_bankwebsite">@item.BANK_WEBSITE</label> </span>  <input type="text" id="txt_bankwebsite" value="@item.BANK_WEBSITE" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("BANK_CONTACTPERSONNAME", "CONTACT NAME", format: @<text> <span  class="display-mode"> <label id="lbl_personname">@item.BANK_CONTACTPERSONNAME</label> </span>  <input type="text" id="txt_personname" value="@item.BANK_CONTACTPERSONNAME" class="edit-mode" /></text>, style: "col1Width"),
+    grid.Column("BANK_CONTACTPERSONMOBILE", "CONTACT MOBILE", format: @<text> <span  class="display-mode"> <label id="lbl_personmobile">@item.BANK_CONTACTPERSONMOBILE</label> </span>  <input type="text" id="txt_personmobile" value="@item.BANK_CONTACTPERSONMOBILE" class="edit-mode" /></text>, style: "col1Width"),
+    grid.Column("BANK_CONTACTPERSONEMAIL", "CONTACT EMAIL", format: @<text> <span  class="display-mode"> <label id="lbl_personemail">@item.BANK_CONTACTPERSONEMAIL</label> </span>  <input type="text" id="txt_personemail" value="@item.BANK_CONTACTPERSONEMAIL" class="edit-mode" /></text>, style: "col1Width"),
+*@
+              grid.Column("", format: @<text>
+            <button class="edit-user display-mode" >Edit</button>
+            <button class="save-user edit-mode"  >Save</button>
+            <button class="cancel-user edit-mode" >Cancel</button>
+        </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+<div align="right">
+@using (Html.BeginForm("Export_fundbankaccount_setup", "Home", FormMethod.Post))
+{
+    <table width="900px">
+<tr>
+<td></td><td></td>
+</tr>
+<tr>
+<td >
+</td>
+<td align="center">
+
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

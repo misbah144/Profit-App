@@ -1,0 +1,377 @@
+﻿@model DAP.Models.trandetail_fund
+
+@{
+    ViewBag.Title = "Balance_Transfer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .edit-mode {
+    }
+
+    .edit-user {
+    }
+
+        .edit-user display-mode {
+        }
+
+    .save-user edit-mode {
+    }
+
+    .display-mode {
+    }
+
+    .cancel-user {
+    }
+
+    .webgrid-table {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 10px;
+        font-weight: bold;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;
+    }
+
+        .webgrid-table td, th {
+            border: 1px solid #C5C5C5;
+            padding: 3px 7px 2px;
+        }
+
+    .webgrid-header, .webgrid-header a {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration: none;
+    }
+
+    .webgrid-footer {
+    }
+
+    .webgrid-row-style {
+        padding: 3px 7px 2px;
+    }
+
+    .webgrid-alternating-row {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+
+    .col1Width {
+        width: 100px;
+    }
+
+    .col2Width {
+        width: 200px;
+    }
+
+    .col3Width {
+        width: 10px;
+    }
+
+    .col4Width {
+        width: 50px;
+    }
+
+    .col5Width {
+        width: 110px;
+    }
+
+    .col6Width {
+        width: 300px;
+    }
+
+
+    .nodisplay {
+        display: none;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            //var  = tr.find("#bankid").html();
+            var fbacc_id = tr.find("#txt_fbacc_id").val();
+            var ptrate_percent = tr.find("#txt_ptrate_percent").val();
+            var txnd_amount = tr.find("#txt_txnd_amount").val();
+            //            var FUND_ID = tr.find("#txt_fund_name").val();
+            var profit = tr.find("#txt_profit").val();
+            var value_date = tr.find("#txt_value_date").val();
+            //    tr.find('.edit-mode, .display-mode').toggle();
+            var trandetail =
+            {
+                "fbacc_id": fbacc_id,
+                "ptrate_percent": ptrate_percent,
+                "txnd_amount": txnd_amount,
+                "profit": profit,
+                "value_date": value_date
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_trandetail/',
+                data: JSON.stringify(trandetail),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/trandetail_fund_setup/';
+                }
+            });
+
+
+
+
+            //var tr = $(this).parents('tr:first');
+            //  tr.find('.edit-mode, .display-mode').toggle();
+
+        });
+
+
+
+        $('#radio_bank').change(function () {
+            //($(this).val() == 'BT')
+            $('#radio_fund').prop('checked', false);
+            //            $('#radio_bank').val()='BT'
+            //            $('#radio_fund').val()='Fund'
+            $('#bankwise1').show();
+            $('#fundwise1').hide();
+            //                $('#fundwise').prop("disabled", true);
+            //                $('#bankwise').prop("disabled", false);
+            // }
+            //            else {
+            //                $('#bankwise').hide();
+            //                $('#fundwise').show();
+            //            }
+        });
+
+        $('#radio_fund').change(function () {
+            //   ($(this).val()=='FT')
+            $('#radio_bank').prop('checked', false);
+            //                $('#radio_bank').val() = 'Bank'
+            //                $('#radio_fund').val() = 'FT'
+
+            $('#bankwise1').hide();
+            //                $('#bankwise').prop("disabled",true);
+            //                $('#fundwise').prop("disabled",false);
+            $('#fundwise1').show();
+            //            }
+            //            else {
+            //                $('#other-inputs').show();
+            //                $('#inputs-for-A').hide();
+            //            }
+        });
+
+        ///////////////////////////////// profit calculation ////////////////////////
+
+        $(function () {
+            $(txt_txnd_amount).blur(function () {
+
+                var tr = $(this).parents('tr:first');
+                var value = parseInt($(this).val());
+                var newValue = (value * .01 * parseFloat(tr.find('#txt_ptrate_percent').val())) / 365
+                //                var tr = $(this).parents('tr:first');
+                tr.find('#txt_profit').val(newValue.toFixed(2));
+            });
+        });
+
+        ///////////////////////////////// profit calculation ////////////////////////
+
+
+
+
+
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var PFRQ_NAME = tr.find("#txt_typename").val();
+            var PFRQ_SHORTNAME = tr.find("#txt_shortname").val();
+            var PFRQ_STATUS = tr.find("#txt_type_status").val();
+            var PFRQ_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var PFRQ_ID = tr.find("#banktypeid").html();
+
+            ///////////////////////
+
+            if (PFRQ_NAME == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (PFRQ_SHORTNAME == "") {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (PFRQ_STATUS == "") {
+                alert("Status  Required");
+                return false;
+            }
+
+
+            /////////////////////////////
+
+
+
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var ProfitFrequency_Setup =
+            {
+                "PFRQ_ID": PFRQ_ID,
+                "PFRQ_NAME": PFRQ_NAME,
+                "PFRQ_SHORTNAME": PFRQ_SHORTNAME,
+                "PFRQ_STATUS": PFRQ_STATUS,
+                "PFRQ_ISDEFAULT": PFRQ_ISDEFAULT
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_profitfrequency/',
+                data: JSON.stringify(ProfitFrequency_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/profitfrequency_setup/';
+
+                }
+            });
+
+        });
+    })
+</script>
+
+
+<h2>Balance Transfer</h2>
+
+
+<div align="center">
+    @using (Html.BeginForm("Balance_Transfer", "Home", FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <th>
+                    @*
+                        <table>
+                        <tr>
+                        <td>
+                        FUND: <input
+                                checked="checked"
+                                id="radio_fund"
+                                name="wise"
+                                type="radio"
+                                value="Fund" />
+                        </td>
+                        <td>
+                        BANK: <input id="radio_bank"
+                                name="wise"
+                                type="radio"
+                                value="Bank" />
+                        </td>
+
+                         <td>Post Date: <input type="text" id="txt_post_date_string" value="@Model.post_date_string" style="width:60px; font-size:10px; font-weight:bold;font-family: Arial,Helvetica,sans-serif" /> </td>
+                        </tr>
+
+                        </table>*@
+
+
+
+                    <table cellpadding="3" cellspacing="3" id="fundwise">
+                        <tr>
+                            <th colspan="8" style="background-color:gray;" align="left">Entry Form</th>
+                        </tr>
+                        <tr>                            
+                            <td align="left">Post Date: <input type="text" id="txt_post_date_string" readonly="readonly" class="display-mode" value="@Model.post_date_string" style="width:60px; font-size:10px; font-weight:bold;font-family: Arial,Helvetica,sans-serif" /> </td>
+                        </tr>
+                        @*<tr id="fundwise1">
+                            <td>Fund Name: </td>
+                            <td align="left">
+                                
+                                @Html.DropDownListFor(m => m.FUND_ID, new SelectList(Model.FUND_OPTION_LIST, "FUND_ID", " FUND_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+                            <td style="color: #FF0000">
+                                @Html.ValidationMessageFor(m => m.FUND_ID)
+                            </td>
+                        </tr>*@
+
+                        @*<tr id="bankwise1" style="display: none">
+                            <td>Bank Name: </td>
+                            <td align="left">
+                               
+                                @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.BANK_OPTION_LIST, "BANK_ID", " BANK_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+                            <td style="color: #FF0000">
+                                @Html.ValidationMessageFor(m => m.BANK_ID)
+                            </td>
+                        </tr>*@
+
+                        <tr>
+                            <td>Transfer From: </td>
+                            <td align="left">
+
+                                @Html.EditorFor(model => model.Val_Date, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @*<input type="submit" value="Search" />*@
+
+                                @*  @Html.TextBoxFor(m => m.FBACC_OPENINGDATE)*@       @*needs to perform some action in insert and update function*@
+                            </td>
+                            <td></td>
+                            <td style="color: #FF0000">
+                                @Html.ValidationMessageFor(m => m.Val_Date)
+                            </td>
+
+                             <td>Transfer To: </td>
+                            <td align="left">
+
+                                @Html.EditorFor(model => model.Transfer_Date, new { htmlAttributes = new { @class = "form-control" } })
+
+                                <input type="submit" value="Transfer" />
+
+                                @*  @Html.TextBoxFor(m => m.FBACC_OPENINGDATE)*@       @*needs to perform some action in insert and update function*@
+                            </td>
+                            <td></td>
+                            
+                            
+                            <td style="color: #FF0000">
+                                @Html.ValidationMessageFor(m => m.Transfer_Date)
+                            </td>
+                        </tr>
+
+                        <tr></tr>
+
+                        <tr>
+                            <td></td>
+                            @*  <td colspan="2" align="left"><input type="submit" value="Search" /></td>*@
+                        </tr>
+                        <tr><td></td></tr>
+                    </table>
+
+                    @*hh*@
+                </th>
+            </tr>
+        </table>
+
+
+
+    }
+
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert('@ViewBag.Message');
+            };
+        </script>
+    }
+
+
+
+
+
+</div>
+
+@*////////////////////////////////////////////////////////////////////////////////////////////*@
+

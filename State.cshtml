@@ -1,0 +1,287 @@
+﻿@model DAP.Models.State
+
+@{
+    ViewBag.Title = "State";
+}
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 430px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 10px;
+    }
+    .col2Width
+    {
+        width: 80px;
+    }
+    .col4Width
+    {
+        width: 40px;
+    }
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        //        $("#post_button").on('click', function () {
+        //            //            $("#comp_name").val($(this).find("option:selected").text());
+
+        //            var a = document.getElementById("ddl_compname");
+        //            //        var strUser = e.options[e.selectedIndex].value;
+        //            var va = a.options[a.selectedIndex].text;
+
+        //            var b = document.getElementById("ddl_fundshortname");
+        //            //        var strUser = e.options[e.selectedIndex].value;
+        //            var vb = b.options[b.selectedIndex].text;
+
+        //            $("#comp_name").val(va);
+        //            $("#fund_name_short").val(vb);
+
+
+
+        //        });
+
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var name = tr.find("#txt_state_name").val();
+            var shortname = tr.find("#txt_state_shortname").val();         
+         var STATE_STATUS=tr.find("#txt_state_status").val();
+            var country_id= tr.find("#txt_country_name").val();
+            var id = tr.find("#stateid").html();
+
+//            var rating_status = tr.find("#txt_rating_status").val();
+//            var rating_isdefault = tr.find("#txt_rating_isdefault").val();
+         
+
+
+            ///////////////////////
+
+            if (name == "") 
+            {
+                alert("Name Required");
+                return false;
+            }
+            if (shortname == "") 
+            {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (country_id == "") {
+                alert("Country Name Required");
+                return false;
+            }
+
+            /////////////////////////////           
+            tr.find("#lblstatename").text(txt_state_name);
+            tr.find("#lbstateshortname").text(txt_state_shortname);
+            tr.find("#lbl_country_name").text(txt_country_name);
+            tr.find("#lblstate_status").text(txt_state_status);
+            
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var State =
+            {
+                "id": id,
+                "name": name,
+                "sname": shortname,
+                "STATE_STATUS":STATE_STATUS,
+                "country_id": country_id
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_state/',
+                data: JSON.stringify(State), 
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                alert(data);
+                window.location.href = '/DAP/Home/State/';   // used to redirect or load page 
+
+                }
+            });
+
+        });
+    })
+</script>
+<h2>State</h2>
+
+<div align="center"> 
+@using (Html.BeginForm("State", "Home", FormMethod.Post))
+    {
+       <table>
+            <tr>
+                <th>  
+    
+      <table cellpadding="3" cellspacing="3">
+            <tr>
+            <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+            <td align="left">Name: </td>
+            <td>
+            @Html.TextBoxFor(m =>m.name)
+            </td>
+            <td style="color: #FF0000">*            
+            @Html.ValidationMessageFor(m=>m.name)
+            </td>
+            </tr>            
+            <tr>
+            <td align="left">Short Name: </td>
+            <td>
+            @Html.TextBoxFor(m =>m.sname)
+            </td>
+            <td style="color: #FF0000">*            
+            @Html.ValidationMessageFor(m=>m.sname)
+            </td>
+            
+            </tr>       
+         <tr>
+                <td align="left">Status: </td>
+                 <td align="left">
+                    @Html.DropDownListFor(m => m.STATE_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                    )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.STATE_STATUS)
+            </td>            
+            </tr>   
+            <tr> 
+            <td align="left">Country Name: </td>
+            <td align="left">
+            @Html.DropDownListFor(m => m.country_id, new SelectList(Model.country_list,"country_id","country_name"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+            </td>
+            <td style="color: #FF0000">            
+            @Html.ValidationMessageFor(m => m.country_id)
+            </td>            
+            </tr>
+            <tr>
+            <td></td>
+            <td colspan="2" align="left"><input type="submit" value="Add" />
+            <input type="button" value="Clear" onclick="location.href='@Url.Action("State","Home")'" />
+            </td>
+            </tr>
+        
+    </table>
+    
+    </th>
+    </tr>
+    </table>
+
+    
+    }
+
+</div>
+
+
+
+@{
+    var grid = new WebGrid(Model.state_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+    grid.Columns(
+    grid.Column("Id","ID", format: @<text>  <span  class="display-mode">@item.id</span><label id="stateid" class="edit-mode">@item.id</label> </text>, style: "col1Width"),
+    grid.Column("name","Name", format: @<text>  <span  class="display-mode"> <label id="lblstatename">@item.name</label> </span> <input type="text" id="txt_state_name" value="@item.name" class="edit-mode" /></text>, style: "col2Width"),
+    grid.Column("sname", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbstateshortname">@item.sname</label> </span>  <input type="text" id="txt_state_shortname" value="@item.sname" class="edit-mode" /> </text>, style: "col2Width"),
+ 
+ grid.Column("country_name", "Country Name", format: @<text> <span  class="display-mode"> <label id="lbl_country_name">@item.country_name</label> </span>  
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@ 
+  @Html.DropDownListFor(m => m.country_id, new SelectList(Model.country_list, "country_id", "country_name"), new { id = "txt_country_name", @class = "edit-mode" })
+</text>, style: "col2Width"),
+ grid.Column("STATE_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lblstate_status">@item.STATE_STATUS</label> </span>   
+    @*<input list="colors"  id="txt_state_status" class="edit-mode" />
+    <datalist id="colors">
+  <option value="ACTIVE">
+  <option value="INACTIVE">  
+</datalist>*@  
+    <select class="edit-mode" id="txt_state_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+    
+</text>, style: "col2Width"),
+
+
+
+   @* grid.Column("rating_isdefault", "Is Default", format: @<text> <span  class="display-mode"> <label id="lblrating_default">@item.rating_isdefault</label> </span>    
+    <input list="colors1"  id="txt_rating_isdefault" class="edit-mode" />
+    <datalist id="colors1">
+  <option  value="TRUE">
+  <option value="FALSE">  
+</datalist> 
+
+
+             
+             </text>, style: "col2Width"),*@
+             grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Update</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>, style: "col4Width", canSort: false)
+           ))
+
+</div>
+
+
+
+

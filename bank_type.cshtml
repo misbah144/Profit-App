@@ -1,0 +1,300 @@
+﻿@model DAP.Models.Bank_Type
+
+@{
+    ViewBag.Title = "bank_type";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 580px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+    .col4Width
+    {
+        width: 100px;
+    }
+
+
+
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var BNKTYPE_NAME = tr.find("#txt_typename").val();
+            var BNKTYPE_SHORTNAME = tr.find("#txt_shortname").val();
+            var BNKTYPE_STATUS = tr.find("#txt_type_status").val();
+            var BNKTYPE_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var BNKTYPE_ID = tr.find("#banktypeid").html();
+
+
+
+            if (BNKTYPE_NAME == "") 
+            {
+                alert("Name Required");
+                return false;
+            }
+            if (BNKTYPE_SHORTNAME == "") 
+            {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (BNKTYPE_STATUS == "" || (BNKTYPE_STATUS != "INACTIVE" && BNKTYPE_STATUS != "ACTIVE")) 
+            {
+                alert("Status  Required");
+                return false;
+            }
+            if (BNKTYPE_STATUS != "ACTIVE" && BNKTYPE_STATUS != "INACTIVE") 
+            {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+            if (BNKTYPE_ISDEFAULT == "") 
+            {
+                alert("IS DEFAULT Required");
+                return false;
+            }
+            if (BNKTYPE_ISDEFAULT != "TRUE" && BNKTYPE_ISDEFAULT != "FALSE") 
+            {
+                alert("Kindly provide value in correct format");
+                return false;
+            }
+            
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var Bank_Type =
+            {
+                "BNKTYPE_ID": BNKTYPE_ID,
+                "BNKTYPE_NAME": BNKTYPE_NAME,
+                "BNKTYPE_SHORTNAME": BNKTYPE_SHORTNAME,
+                "BNKTYPE_STATUS": BNKTYPE_STATUS,
+                "BNKTYPE_ISDEFAULT": BNKTYPE_ISDEFAULT
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_bank_type/',
+                data: JSON.stringify(Bank_Type),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/bank_type/';
+                }
+            });
+
+        });
+    })
+</script>
+
+@*<h2>bank_type</h2>*@
+<h2>Bank Type Setup</h2>
+
+<div align="center"> 
+@using (Html.BeginForm("bank_type","Home",FormMethod.Post))
+    {
+     <table>
+            <tr>
+                <th>    
+       <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.BNKTYPE_NAME)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.BNKTYPE_NAME)
+            </td>
+            </tr>
+            <tr>
+                <td>Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.BNKTYPE_SHORTNAME)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.BNKTYPE_SHORTNAME)
+            </td>
+            
+            </tr>
+       <tr>
+                <td>Status: </td>
+                 <td align="left">
+                    @Html.DropDownListFor(m => m.BNKTYPE_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                    )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BNKTYPE_STATUS)
+            </td>
+            </tr>            
+               @*<tr>
+                <td>Rating Status: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.rating_status)
+                </td>
+            </tr>*@
+            <tr>
+                <td>Isdefault: </td>
+                <td align="left">                 
+                  @Html.CheckBoxFor(m =>m.BNKTYPE_ISDEFAULT_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                 <td colspan="2" align="left"><input type="submit" value="ADD" />
+                 <input type="button" value="Clear" onclick="location.href='@Url.Action("bank_type", "Home")'" />
+                 </td>
+            
+            </tr>
+        </table>
+      </th>
+      </tr>
+        </table>
+    
+    
+    }
+
+</div>
+
+
+
+@{
+    var grid = new WebGrid(Model.bank_type_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+       grid.Column("BNKTYPE_ID","ID", format: @<text>  <span  class="display-mode">@item.BNKTYPE_ID </span> <label id="banktypeid" class="edit-mode">@item.BNKTYPE_ID</label> </text>, style: "col1Width" ),
+       grid.Column("BNKTYPE_NAME", "Bank Type Name", format: @<text>  <span  class="display-mode"> <label id="lbl_type_name"  >@item.BNKTYPE_NAME</label> </span> <input type="text" id="txt_typename" value="@item.BNKTYPE_NAME" class="edit-mode" /></text>, style: "col2Width"),
+       grid.Column("BNKTYPE_SHORTNAME", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbl_shortname">@item.BNKTYPE_SHORTNAME</label> </span>  <input type="text" id="txt_shortname" value="@item.BNKTYPE_SHORTNAME" class="edit-mode" /> </text>, style: "col2Width"),
+       grid.Column("BNKTYPE_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_typestatus">@item.BNKTYPE_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_type_status" class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@  
+    <select class="edit-mode" id="txt_type_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+
+    </text>, style: "col2Width"),
+
+
+       grid.Column("BNKTYPE_ISDEFAULT", "Is Default", format: @<text> <span  class="display-mode"> <label id="lbl_default">@item.BNKTYPE_ISDEFAULT</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       
+    @*<input list="colors1"  id="txt_type_isdefault"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+    
+    <select class="edit-mode" id="txt_type_isdefault">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select> 
+
+    </text>, style: "col4Width"),
+
+       grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+
+<div align="center">
+@using (Html.BeginForm("ExportData_bank_type", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

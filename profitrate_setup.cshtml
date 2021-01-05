@@ -1,0 +1,623 @@
+﻿@model DAP.Models.ProfitRate_Setup
+
+@{
+    ViewBag.Title = "profitrate_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .edit-mode 
+    {         
+   
+   font-size: 8px;
+   width:60px;        
+   font-family: Arial,Helvetica,sans-serif;     
+    
+    }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 10px;
+        font-weight: normal;
+        width: 700px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+     .col1Width
+    {
+        width: 160px;
+    }
+    .col2Width
+    {
+        width: 100px;
+    }
+ .col3Width
+    {
+        width: 10px;
+    }
+ .col4Width
+    {
+        width: 50px;
+    }
+    .nodisplay {
+        display: none;
+    }
+
+
+
+</style>
+<script type="text/javascript" >
+
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+        
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var PTRATE_ID = tr.find("#bankid").html();
+            var EFFECTIVEFROM = tr.find("#txt_PTRATE_EFFECTIVEFROM").val();
+            var EFFECTIVETO = tr.find("#txt_PTRATE_EFFECTIVETO").val();
+            var PTRATE_PERCENT = tr.find("#txt_PTRATE_PERCENT").val();
+//            var FUND_ID = tr.find("#txt_fund_name").val();
+            var BANK_ID = tr.find("#txt_bank_name").val();
+            var BBR_ID = tr.find("#txt_branch_name").val();
+            var ACCTYPE_ID = tr.find("#txt_acctype_name").val();
+            var ACCPUR_ID = tr.find("#txt_accpur_name").val();
+            var PTRATE_STATUS = tr.find("#txt_status").val();
+            var PTRATE_COMPID = tr.find("#txt_COMP_NAME").val();
+            var SLAB_ID = tr.find("#txt_SLAB_NAME").val();
+//            var FBACC_TDEBITACCOUNT = tr.find("#txt_FBACC_TDEBITACCOUNT").val();
+//            var FBACC__ISPOOLED = tr.find("#txt_FBACC__ISPOOLED").val();
+//            var FBACC_ISCLOSED = tr.find("#txt_FBACC_ISCLOSED").val();
+//            var FBACC_CLOSINGDATE = tr.find("#txt_FBACC_CLOSINGDATE").val();
+//            var FBACC_OPENINGDATE = tr.find("#txt_FBACC_OPENINGDATE").val();
+
+            //                var BANK_CONTACTPERSONNAME = tr.find("#txt_personname").val();
+            //            var BANK_CONTACTPERSONMOBILE = tr.find("#txt_personmobile").val();
+            //            var BANK_CONTACTPERSONEMAIL = tr.find("#txt_personemail").val();
+
+            ///////////////////////
+
+            if (PTRATE_STATUS == "" || (PTRATE_STATUS != "INACTIVE" && PTRATE_STATUS != "ACTIVE")) 
+            {
+                alert("PTRATE STATUS Required");
+                return false;
+            }
+            //var re_cd = /^[1-9][0-9]{1,2}$/;
+           
+            var re_cd = /[+-]?([0-9]*[.])?[0-9]+$/;
+            
+            
+            if (PTRATE_PERCENT == "") {
+                alert("PTRATE_PERCENT Required");
+                return false;
+            }
+
+            if (re_cd.test(String(PTRATE_PERCENT).toLowerCase()) == false) {
+                alert("Required Correct Percent");
+                return false;
+            }
+          
+            if (parseFloat(PTRATE_PERCENT)>=100||parseFloat(PTRATE_PERCENT)<0) 
+            {
+                alert("Provide Correct Percentage");
+                return false;            
+            }            
+            if (EFFECTIVEFROM == "") {
+                alert("EFFECTIVEFROM DATE Required");
+                return false;
+            }
+            if (EFFECTIVETO == "") {
+                alert("EFFECTIVETO DATE  Required");
+                return false;
+            }
+
+            /////////////////////////////
+
+            tr.find("#lbl_PTRATE_EFFECTIVEFROM").text(txt_PTRATE_EFFECTIVEFROM);
+            tr.find("#lbl_PTRATE_EFFECTIVETO").text(txt_PTRATE_EFFECTIVETO);
+            tr.find("#lbl_status").text(txt_status);
+//            tr.find("#lbl_fund_name").text(txt_fund_name);
+//            tr.find("#lbl_company_id").text(txt_company_id);
+            tr.find("#lbl_bank_name").text(txt_bank_name);
+            tr.find("#lbl_branch_name").text(txt_branch_name);
+            tr.find("#lbl_acctype_name").text(txt_acctype_name);
+            tr.find("#lbl_accpur_name").text(txt_accpur_name);
+            tr.find("#lbl_PTRATE_PERCENT").text(txt_PTRATE_PERCENT);
+            tr.find("#lbl_COMP_NAME").text(txt_COMP_NAME);
+            tr.find("#lbl_SLAB_NAME").text(txt_SLAB_NAME);
+//            tr.find("#lbl_FBACC_TDEBITACCOUNT").text(txt_FBACC_TDEBITACCOUNT);
+//            tr.find("#lbl_FBACC__ISPOOLED").text(txt_FBACC__ISPOOLED);
+//            tr.find("#lbl_FBACC_ISCLOSED").text(txt_FBACC_ISCLOSED);
+//            tr.find("#lbl_FBACC_CLOSINGDATE").text(txt_FBACC_CLOSINGDATE);
+//            tr.find("#lbl_FBACC_OPENINGDATE").text(txt_FBACC_OPENINGDATE);
+            //            tr.find("#lbl_personemail").text(txt_personemail);
+            //            tr.find("#lbl_personmobile").text(txt_personmobile);
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var ProfitRate_Setup =
+            {
+                "PTRATE_ID": PTRATE_ID,
+                "EFFECTIVEFROM": EFFECTIVEFROM,
+                "EFFECTIVETO": EFFECTIVETO,
+                "PTRATE_STATUS": PTRATE_STATUS,
+                "PTRATE_COMPID": PTRATE_COMPID,
+                "PTRATE_PERCENT": PTRATE_PERCENT,
+                //                "BANK_STATUS": BANK_STATUS,
+                "BANK_ID": BANK_ID,
+                "BBR_ID": BBR_ID,
+                "ACCTYPE_ID": ACCTYPE_ID,
+                "ACCPUR_ID": ACCPUR_ID,
+                "SLAB_ID": SLAB_ID
+               
+//                "FBACC_TCREDITACCOUNT": FBACC_TCREDITACCOUNT,
+//                "FBACC_TDEBITACCOUNT": FBACC_TDEBITACCOUNT,
+//                "FBACC__ISPOOLED": FBACC__ISPOOLED,
+//                "FBACC_ISCLOSED": FBACC_ISCLOSED,
+//                "FBACC_CLOSINGDATE": FBACC_CLOSINGDATE,
+//                "FBACC_OPENINGDATE": FBACC_OPENINGDATE
+                //                
+                //"BANK_CONTACTPERSONMOBILE": BANK_CONTACTPERSONMOBILE,
+                //                "BANK_CONTACTPERSONEMAIL": BANK_CONTACTPERSONEMAIL
+          
+                    
+               };
+            $.ajax({
+                url: '/DAP/Home/edit_profitrate/',
+                data: JSON.stringify(ProfitRate_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/profitrate_setup/';
+                }
+            });
+
+        });
+    })
+
+
+</script>
+
+<h2>Profit Rate Setup</h2>
+<div align="center"> 
+@using (Html.BeginForm("profitrate_setup", "Home", FormMethod.Post))
+    {
+    
+    
+     <table>
+            <tr>
+                <th>   
+    
+    <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="5" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+               <td align="left">Company Name: </td>
+              <td align="left">                           
+               @Html.DropDownListFor(m => m.PTRATE_COMPID, new SelectList(Model.fund_list, "PTRATE_COMPID", "COMP_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })               
+                </td>
+            
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PTRATE_COMPID)
+            </td>
+                @*<td> PTRATE_PERCENT: </td>
+               <td align="left">
+                    @Html.TextBoxFor(m => m.PTRATE_PERCENT)
+                </td>      
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PTRATE_PERCENT)
+            </td>*@
+           
+           <td align="left">Effective From </td>
+                <td>
+                   @Html.EditorFor(model => model.EFFECTIVEFROM, new { htmlAttributes = new { @class = "form-control" } }) 
+                   @* @Html.TextBoxFor(m => m.PTRATE_EFFECTIVEFROM)*@
+                </td>                              
+             <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.EFFECTIVEFROM)
+            </td>                        
+            </tr>
+            <tr>
+               
+                <td align="left">Bank Name: </td>
+             <td align="left">                       
+                    @*@Html.TextBoxFor(m =>m.CITY_ID)*@
+                @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                
+                </td>
+
+               
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BANK_ID)
+            </td>           
+
+
+                @*<td>EFFECTIVETO </td>
+                 <td align="left">
+                 @Html.EditorFor(model => model.EFFECTIVETO, new { htmlAttributes = new { @class = "form-control" } }) 
+                 
+                </td>
+         
+            <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.EFFECTIVETO)
+            </td>*@
+          @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+          <td align="left">Effective To </td>
+                 <td align="left">
+                 @Html.EditorFor(model => model.EFFECTIVETO, new { htmlAttributes = new { @class = "form-control" } }) 
+                 
+                </td>
+         
+            <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.EFFECTIVETO)
+            </td>
+          @* <td>SLAB NAME </td>
+               <td align="left">
+               @Html.DropDownListFor(m => m.SLAB_ID, new SelectList(Model.slab_list, "SLAB_ID", "SLAB_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>                           
+           <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.SLAB_ID)
+            </td>   *@         
+            </tr>
+        <tr>
+                <td align="left">Branch Name: </td>
+              <td align="left">                                 
+                  @*  @Html.TextBoxFor(m =>m.STATE_ID)*@
+                
+                 @Html.DropDownListFor(m => m.BBR_ID, new SelectList(Model.branch_list, "BBR_ID", "BBR_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_ID)
+            </td>
+
+           
+         @*  <td>Opening Date: </td>*@
+               @* <td> *@         
+                   
+                @*   @Html.EditorFor(model => model.Opening_Date, new { htmlAttributes = new { @class = "form-control" } })   *@
+                  @*  @Html.TextBoxFor(m => m.FBACC_OPENINGDATE)*@       @*needs to perform some action in insert and update function*@ 
+                @*</td>*@
+                <td style="color: #FF0000">            
+           @*  @Html.ValidationMessageFor(m=>m.Opening_Date)
+            </td>*@
+
+
+            </tr>
+       
+       
+       <tr>
+                <td align="left">Status: </td>
+             <td align="left">
+                    @Html.DropDownListFor(m => m.PTRATE_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     )
+                </td>
+           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.PTRATE_STATUS)
+            </td>
+
+                         
+               @* <td>   *@               
+                @*  @Html.CheckBoxFor(m =>m.FBACC__ISPOOLED_BOOL, true)    *@              
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                @*</td>*@
+           
+        @*   <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.BANK_EMAIL)
+            </td>*@
+           
+            </tr>            
+             
+             <tr>
+                <td align="left">Account Type Name: </td>
+               <td align="left">                               
+                   @* @Html.TextBoxFor(m =>m.COUNTRY_ID)*@
+                 @Html.DropDownListFor(m => m.ACCTYPE_ID, new SelectList(Model.acctype_list, "ACCTYPE_ID", "ACCTYPE_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCTYPE_ID)
+            </td>
+
+           
+         @*  <td>Bank Contact Person Email: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BANK_CONTACTPERSONEMAIL)
+                </td>
+                <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BANK_CONTACTPERSONEMAIL)
+            </td>*@
+                      
+           </tr>
+             
+             
+             
+               <tr>
+               @* <td>IS_CLOSED: </td>*@
+              @*  <td>  *@                
+               @*   @Html.CheckBoxFor(m =>m.FBACC_ISCLOSED_BOOL, true)  *@                
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+               @* </td>*@
+        @*    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+         @*  <td style="color: #FF0000">
+           @Html.ValidationMessageFor(m=>m.Bank_Code)
+            </td>*@
+           
+           <td align="left">Account Purpose Name: </td>                @*needs some correction for accu_purname*@
+               <td align="left">
+                   @Html.DropDownListFor(m => m.ACCPUR_ID, new SelectList(Model.accpur_list, "ACCPUR_ID", "ACCPUR_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.ACCPUR_ID)
+            </td>
+            
+            </tr>
+          
+           <tr>
+            <td align="left">Slab Name </td>
+               <td align="left">
+               @Html.DropDownListFor(m => m.SLAB_ID, new SelectList(Model.slab_list, "SLAB_ID", "SLAB_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>                           
+           <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.SLAB_ID)
+            </td>
+            @*<td>EFFECTIVETO </td>
+                 <td align="left">
+                 @Html.EditorFor(model => model.EFFECTIVETO, new { htmlAttributes = new { @class = "form-control" } }) 
+                 
+                </td>
+         
+            <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.EFFECTIVETO)
+            </td>*@
+               @* <td>BANK NAME: </td>
+             <td align="left">                       
+                   
+                @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                
+                </td>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BANK_ID)
+            </td>           *@
+          @* <td>Closing Date: </td>*@
+                <td>                  
+                   @*  @Html.EditorFor(model => model.Closing_Date, new { htmlAttributes = new { @class = "form-control" } }) *@
+                   @* @Html.TextBoxFor(m => m.FBACC_CLOSINGDATE)*@           @*needs to perform some action in insert and update function*@ 
+                </td>
+         @*   <td style="color: #FF0000"> *@           
+           @*  @Html.ValidationMessageFor(m=>m.Closing_Date)*@
+          @*  </td>*@
+           </tr>
+
+            <tr>
+               <td align="left"> Ptrate Percent: </td>
+               <td align="left">
+                    @Html.TextBoxFor(m => m.PTRATE_PERCENT)
+                </td>      
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.PTRATE_PERCENT)
+            </td>
+                @*<td>COMPANY NAME: </td>
+              <td align="left">                           
+               @Html.DropDownListFor(m => m.PTRATE_COMPID, new SelectList(Model.fund_list, "PTRATE_COMPID", "COMP_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })               
+                </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PTRATE_COMPID)
+            </td>*@
+           
+        @*   <td>PBAS NAME: </td>
+                <td>
+                   @Html.DropDownListFor(m => m.PBAS_ID, new SelectList(Model.pbas_list, "PBAS_ID", "PBAS_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PBAS_ID)
+            </td>*@
+            </tr>
+
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                @*<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>*@
+                 <td colspan="6" align="center"><input type="submit" value="ADD" />
+                <input type="button" value="CLEAR" onclick="location.href='@Url.Action("profitrate_setup", "Home")'" />
+                </td>           
+            </tr>
+        </table>
+   
+      </th>
+      </tr>
+        </table>
+
+
+    
+    }
+
+</div>
+
+<table>
+<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+</table>
+
+
+
+
+@{
+    var grid = new WebGrid(Model.profit_rate_list, rowsPerPage: 50);
+}
+<div id="gridContent" align="center"  >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+ grid.Column("ID", format: @<text><span  class="display-mode">@item.PTRATE_ID</span> <label id="bankid" class="edit-mode">@item.PTRATE_ID</label> </text>, style: "col1Width"),
+ grid.Column("PTRATE_EFFECTIVEFROM","Ptrate Effective From", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_PTRATE_EFFECTIVEFROM"   >@item.PTRATE_EFFECTIVEFROM</label> </span> 
+ @*<input type="text" id="txt_PTRATE_EFFECTIVEFROM" value="@item.PTRATE_EFFECTIVEFROM" class="edit-mode" />*@
+ <input type="date" id="txt_PTRATE_EFFECTIVEFROM" value="@item.PTRATE_EFFECTIVEFROM"  class="edit-mode"  / >
+ </text>, style: "col1Width"),
+
+grid.Column("PTRATE_EFFECTIVETO","Ptrate Effective To", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_PTRATE_EFFECTIVETO"   >@item.PTRATE_EFFECTIVETO</label> </span>  
+ @*@Html.EditorFor(m =>m.EFFECTIVETO,  new { id = "txt_PTRATE_EFFECTIVETO", @class = "edit-mode"})*@
+ @*<input type="text" id="txt_PTRATE_EFFECTIVETO" value="@item.PTRATE_EFFECTIVETO" class="edit-mode"  />*@
+ <input type="date" id="txt_PTRATE_EFFECTIVETO" value="@item.PTRATE_EFFECTIVETO" class="edit-mode"  / >
+ 
+ </text>, style: "col1Width"),
+ 
+grid.Column("PTRATE_PERCENT", "Ptrate Percent", format: @<text> <span  class="display-mode"> <label id="lbl_PTRATE_PERCENT">@item.PTRATE_PERCENT</label> </span>  <input type="text" id="txt_PTRATE_PERCENT" value="@item.PTRATE_PERCENT" class="edit-mode" /> </text>, style: "col1Width"),
+ grid.Column("PTRATE_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_status">@item.PTRATE_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_status" class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">         
+        <option value="INACTIVE">  
+        </datalist>*@  
+    <select class="edit-mode" id="txt_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+
+
+    </text>, style: "col1Width"),
+@*grid.Column("Bank_Code", "CODE", format: @<text> <span  class="display-mode"> <label id="lbl_code">@item.Bank_Code</label> </span>  <input type="text" id="txt_code" value="@item.Bank_Code" class="edit-mode" /> </text>, style: "col1Width"),*@
+
+@*grid.Column("FUND_NAME", "Name", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_name"   >@item.FUND_NAME</label> </span> <input type="text" id="txt_name" value="@item.FUND_NAME" class="edit-mode" /></text>, style: "col1Width"),*@
+
+ grid.Column("COMP_NAME", "Company Name", format: @<text> <span  class="display-mode"> <label id="lbl_COMP_NAME">@item.COMP_NAME</label> </span>  
+    <span class="nodisplay"> <label id="lbl_COMP_NAME_INDEX">@item.PTRATE_COMPID</label> </span>
+
+@Html.DropDownListFor(m => m.PTRATE_COMPID, new SelectList(Model.fund_list, "PTRATE_COMPID", "COMP_NAME", @item.PTRATE_COMPID), new { id = "txt_COMP_NAME", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+@*
+grid.Column("FUND_NAME", "Company Name", format: @<text> <span  class="display-mode"> <label id="lbl_company_id">@item.FUND_NAME</label> </span>  
+@*<input type="text" id="txt_bank_type" value="@item.BNKTYPE_NAME" class="edit-mode" /> *@
+
+//@Html.DropDownListFor(m => m.FBACC_COMPID, new SelectList(Model.fund_list, "FBACC_COMPID", " FUND_NAME"), new { id = "txt_company_id", @class = "edit-mode" })
+
+//</text>, style: "col1Width"),
+
+
+
+
+ grid.Column("BANK_NAME", "Bank Name", format: @<text> <span  class="display-mode"> <label id="lbl_bank_name">@item.BANK_NAME</label> </span>  
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@
+    <span class="nodisplay"> <label id="lbl_bank_name_INDEX">@item.BANK_ID</label> </span>
+  @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME", @item.BANK_ID), new { id = "txt_bank_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("BBR_NAME", "Branch Name", format: @<text> <span  class="display-mode"> <label id="lbl_branch_name">@item.BBR_NAME</label> </span>  
+    <span class="nodisplay"> <label id="lbl_branch_name_INDEX">@item.BBR_ID</label> </span>
+  @Html.DropDownListFor(m => m.BBR_ID, new SelectList(Model.branch_list, "BBR_ID", "BBR_NAME", @item.BBR_ID), new { id = "txt_branch_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("ACCTYPE_NAME", "Account Type Name", format: @<text> <span  class="display-mode"> <label id="lbl_acctype_name">@item.ACCTYPE_NAME</label> </span>  
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@
+    <span class="nodisplay"> <label id="lbl_acctype_name_INDEX">@item.ACCTYPE_ID</label> </span>
+ @Html.DropDownListFor(m => m.ACCTYPE_ID, new SelectList(Model.acctype_list, "ACCTYPE_ID", "ACCTYPE_NAME",@item.ACCTYPE_ID), new { id = "txt_acctype_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("ACCPUR_NAME", "Account Purpose Name", format: @<text> <span  class="display-mode"> <label id="lbl_accpur_name">@item.ACCPUR_NAME</label> </span>  
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@ 
+<span class="nodisplay"> <label id="lbl_accpur_name_INDEX">@item.ACCPUR_ID</label> </span>
+ @Html.DropDownListFor(m => m.ACCPUR_ID, new SelectList(Model.accpur_list, "ACCPUR_ID", "ACCPUR_NAME", @item.ACCPUR_ID), new { id = "txt_accpur_name", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+ grid.Column("SLAB_NAME", "Slab Name", format: @<text> <span  class="display-mode"> <label id="lbl_SLAB_NAME">@item.SLAB_NAME</label> </span>  
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@ 
+    <span class="nodisplay"> <label id="lbl_slab_name_INDEX">@item.SLAB_ID</label> </span>
+    
+     @Html.DropDownListFor(m => m.SLAB_ID, new SelectList(Model.slab_list, "SLAB_ID", "SLAB_NAME", @item.SLAB_ID), new { id = "txt_SLAB_NAME", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+       grid.Column("", format: @<text>
+            <button class="edit-user display-mode" >Edit</button>
+            <button class="save-user edit-mode"  >Save</button>
+            <button class="cancel-user edit-mode" >Cancel</button>
+        </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+
+<div align="center">
+@using (Html.BeginForm("ExportData_profitrate_setup", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

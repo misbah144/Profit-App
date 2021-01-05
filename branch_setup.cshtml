@@ -1,0 +1,634 @@
+﻿@model DAP.Models.Branch_Setup
+
+@{
+    ViewBag.Title = "branch_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .edit-mode 
+    {         
+    font-size: 8px;
+    width:60px;        
+    font-family: Arial,Helvetica,sans-serif;       
+    }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 9px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+    .nodisplay {
+        display: none;
+    }
+</style>
+<script type="text/javascript" >
+
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+
+            var tr = $(this).parents('tr:first');
+            var BBR_NAME = tr.find("#txt_bbr_name").val();            
+            var BANK_ID = tr.find("#txt_name").val();
+            var BBR_CODE = tr.find("#txt_bbrcode").val();
+            var BBR_STATUS = tr.find("#txt_status").val();
+            var BBR_ISISLAMIC = tr.find("#txt_is_islamic").val();
+            var BBR_SWIFTCODE = tr.find("#txt_swift_code").val();
+
+            var BBR_ADDRESSLINE1 = tr.find("#txt_address1").val();
+            var BBR_ADDRESSLINE2 = tr.find("#txt_address2").val();
+
+            var BANK_STATUS = tr.find("#txt_status").val();
+            var BANK_ADDRESSLINE1 = tr.find("#txt_address1").val();
+            var BANK_ADDRESSLINE2 = tr.find("#txt_address2").val();
+
+            var COUNTRY_ID = tr.find("#txt_countryname").val();
+            var STATE_ID = tr.find("#txt_statename").val();
+            var CITY_ID = tr.find("#txt_cityname").val();
+
+
+            var BBR_PHONES = tr.find("#txt_bbr_phone").val();
+            var BBR_FAX = tr.find("#txt_bbr_fax").val();
+            //            var BANK_EMAIL = tr.find("#txt_bankemail").val();
+            //            var BANK_WEBSITE = tr.find("#txt_bankwebsite").val();
+            var BBR_CONTACTPERSONNAME = tr.find("#txt_personname").val();
+            var BBR_CONTACTPERSONMOBILE = tr.find("#txt_personmobile").val();
+            var BBR_CONTACTPERSONEMAIL = tr.find("#txt_personemail").val();
+            var BBR_ID = tr.find("#branch_id").html();
+
+
+            var re_phone = /^[0-9]{7,13}$/;
+
+            var re_bcode = /^[0-9]{4,4}$/;
+
+            var re_scode = /^[0-9]{3,3}$/;
+
+
+            if (BBR_NAME == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (BBR_CODE == "") {
+                alert("Code Required");
+                return false;
+            }
+            if (BBR_SWIFTCODE == "") {
+                alert("Swift code  Required");
+                return false;
+            }
+            if (BBR_STATUS == "" || (BBR_STATUS != "INACTIVE" && BBR_STATUS != "ACTIVE")) 
+            {
+                alert("Status  Required");
+                return false;
+            }
+
+            if (BBR_STATUS != "ACTIVE" && BBR_STATUS != "INACTIVE") {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+
+
+            if (re_bcode.test(String(BBR_CODE).toLowerCase()) == false) {
+                alert("Provide Branch Code In Correct Format");
+                return false;
+            }
+
+            if (re_scode.test(String(BBR_SWIFTCODE).toLowerCase()) == false) {
+                alert("Provide swift code In Correct Format");
+                return false;
+            }
+
+            
+            if (BBR_ISISLAMIC== "") {
+                alert("IS ISLAMIC  Required");
+                return false;
+            }
+
+            if (BBR_ISISLAMIC != "TRUE" && BBR_ISISLAMIC != "FALSE") {
+                alert("Kindly provide  Value in correct format");
+                return false;
+            }
+            
+            //if (BBR_CONTACTPERSONEMAIL == "") {
+            //    alert("Email Required");
+            //    return false;
+            //}
+
+
+            if (re_phone.test(String(BBR_PHONES).toLowerCase()) == false) {
+                alert("Branch Phone Required In Correct Format ");
+                return false;
+            }
+
+            if (re_phone.test(String(BBR_FAX).toLowerCase()) == false) {
+                alert("Branch Fax Required In Correct Format");
+                return false;
+            }
+
+            if(BBR_CONTACTPERSONMOBILE!="")
+            {
+            
+                if (re_phone.test(String(BBR_CONTACTPERSONMOBILE).toLowerCase()) == false) {
+                    alert("Contact Person Mobile Required In Correct Format");
+                    return false;
+                }
+            }
+            var re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if(BBR_CONTACTPERSONEMAIL!="")
+          {
+      
+            if (re.test(String(BBR_CONTACTPERSONEMAIL).toLowerCase()) == false) 
+            {
+                alert(" Contact Person Email Required In Correct Format");
+                return false;
+            }
+          }
+           
+            
+            tr.find("#lbl_bbr_name").text(txt_bbr_name);
+            tr.find("#lbl_name").text(txt_name);
+            tr.find("#lbl_status").text(txt_status);
+            tr.find("#lbl_bbrcode").text(txt_bbrcode);
+            tr.find("#lbl_status").text(txt_status);
+            tr.find("#lbl_is_islamic").text(txt_is_islamic);
+            
+            tr.find("#lbl_address1").text(txt_address1);
+            tr.find("#lbl_address2").text(txt_address2);
+            
+            tr.find("#lbl_countryname").text(txt_countryname);
+            
+            tr.find("#lbl_statename").text(txt_statename);
+            tr.find("#lbl_cityname").text(txt_cityname);
+
+            tr.find("#lbl_bbr_phone").text(txt_bbr_phone);
+            tr.find("#lbl_bbr_fax").text(txt_bbr_fax);
+//            tr.find("#lbl_bankemail").text(txt_bankemail);
+//            tr.find("#lbl_bankwebsite").text(txt_bankwebsite);
+            tr.find("#lbl_personname").text(txt_personname);
+            tr.find("#lbl_personemail").text(txt_personemail);
+            tr.find("#lbl_personmobile").text(txt_personmobile);
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var Branch_Setup =
+            {
+                "BBR_ID": BBR_ID,
+                "BBR_NAME": BBR_NAME,
+                "Bank_ID": BANK_ID,
+                "BBR_CODE": BBR_CODE,
+                "BBR_STATUS": BBR_STATUS,
+                "BBR_ISISLAMIC_BOOL": BBR_ISISLAMIC,
+                "BBR_SWIFTCODE": BBR_SWIFTCODE,
+                "BBR_ADDRESSLINE1": BBR_ADDRESSLINE1,
+                "BBR_ADDRESSLINE2": BBR_ADDRESSLINE2,
+                "COUNTRY_ID": COUNTRY_ID,
+                "STATE_ID": STATE_ID,
+                "CITY_ID": CITY_ID,
+                "BBR_PHONES": BBR_PHONES,
+                "BBR_FAX": BBR_FAX,               
+                // "BANK_EMAIL": bbr,
+                //  "BANK_WEBSITE": BANK_WEBSITE,
+                "BBR_CONTACTPERSONNAME": BBR_CONTACTPERSONNAME,
+                "BBR_CONTACTPERSONMOBILE": BBR_CONTACTPERSONMOBILE,
+                "BBR_CONTACTPERSONEMAIL": BBR_CONTACTPERSONEMAIL
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_branch_setup/',                        // neds changing here !!!
+                data: JSON.stringify(Branch_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {               
+                   alert(data);
+                   window.location.href = '/DAP/Home/branch_setup/'
+                }
+            });
+
+        });
+    })
+
+
+</script>
+
+<h2>Branch Setup</h2>
+
+<div align="center" > 
+
+@*<h2>Branch Setup</h2>*@
+
+@using (Html.BeginForm("branch_setup", "Home", FormMethod.Post))
+    {
+      @Html.ValidationSummary(true) 
+    
+    <table>
+            <tr>
+                <th> 
+    
+         <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="8" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+              <tr>
+                <td align="left">Bank Name: </td>
+              <td align="left">                  
+                 @* @Html.CheckBoxFor(m =>m.BNKTYPE_ID, true)    *@              
+                 @*   @Html.TextBoxFor(m =>m.BNKTYPE_ID)*@
+               @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_setup_list, "Bank_id", "Bank_name"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+               
+                </td>
+            @*<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BANK_ID)
+            </td>
+            </tr>
+                        
+            
+            <tr>
+                <td align="left">Branch Name: </td>
+               <td align="left">
+                    @Html.TextBoxFor(m => m.BBR_NAME)
+                </td>
+           @*<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.BBR_NAME)
+            </td>
+           
+           <td align="left"> Address Line 1: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BBR_ADDRESSLINE1)
+                </td>                              
+             @*<td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.BANK_ADDRESSLINE1)
+            </td>*@                        
+            </tr>
+            <tr>
+                <td align="left">Branch code: </td>
+               <td align="left">
+                    @Html.TextBoxFor(m => m.BBR_CODE)
+                </td>
+           @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+            <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.BBR_CODE)
+            </td>
+           
+           <td align="left"> Address Line 2 </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BBR_ADDRESSLINE2)
+                </td>            
+             
+            
+            </tr>
+       <tr>
+                <td align="left">Status: </td>
+              <td align="left">
+                    @Html.DropDownListFor(m => m.BBR_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     )
+                </td>
+          @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td style="color: #FF0000">
+            
+             @Html.ValidationMessageFor(m=>m.BBR_STATUS)
+            </td>
+
+           <td align="left">Swift Code: </td>
+                <td>
+                 @Html.TextBoxFor(m => m.BBR_SWIFTCODE)
+                </td> 
+           <td style="color: #FF0000">*
+            
+             @Html.ValidationMessageFor(m=>m.BBR_SWIFTCODE)
+            </td>           
+            </tr>            
+               <tr>
+              @*  <td>Bank Code: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Bank_Code)
+                </td>*@
+           @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           <td style="color: #FF0000">
+           @Html.ValidationMessageFor(m=>m.Bank_Code)
+            </td>*@
+           
+           <td align="left">Phone #: </td>
+                <td align="left">
+                    @Html.TextBoxFor(m => m.BBR_PHONES)
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_PHONES)
+            </td>
+             @*<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>*@
+           <td align="left">Is Islamic: </td>
+                <td align="left">                 
+                  @Html.CheckBoxFor(m =>m.BBR_ISISLAMIC_BOOL, true)                                  
+                </td>
+            </tr>
+            
+             <tr>
+             @*   <td>Rating: </td>
+                <td>                                   
+                @*    @Html.TextBoxFor(m =>m.RATING_ID)*@
+              @* 
+               @Html.DropDownListFor(m => m.RATING_ID, new SelectList(Model.rating_list, "RATING_ID", "RATING_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>*@
+            @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.RATING_ID)
+            </td>*@
+
+           
+           <td align="left">Fax #: </td>
+                <td align="left">
+                    @Html.TextBoxFor(m => m.BBR_FAX)
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_FAX)
+            </td>
+            
+            </tr>
+
+            <tr>
+                <td align="left">City: </td>
+               <td align="left">                                   
+                    @*@Html.TextBoxFor(m =>m.CITY_ID)*@
+                @Html.DropDownListFor(m => m.CITY_ID, new SelectList(Model.city_list, "CITY_ID", "CITY_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                
+                </td>
+
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+         @*  <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.CITY_ID)
+            </td>*@
+
+
+           
+           <td align="left">Contact Person Name: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BBR_CONTACTPERSONNAME)
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_CONTACTPERSONNAME)
+            </td>
+
+
+           </tr>
+
+             <tr>
+                <td align="left">State: </td>
+                <td align="left">                                 
+                  @*  @Html.TextBoxFor(m =>m.STATE_ID)*@
+                
+                 @Html.DropDownListFor(m => m.STATE_ID, new SelectList(Model.state_list, "STATE_ID", "STATE_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           @*<td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.STATE_ID)
+            </td>*@
+
+
+
+           
+           <td align="left">Contact Person Mobile: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BBR_CONTACTPERSONMOBILE)
+                </td>
+                <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_CONTACTPERSONMOBILE)
+            </td>
+
+
+            </tr>
+            <tr>
+                <td align="left">Country: </td>
+               <td align="left">                                 
+                   @* @Html.TextBoxFor(m =>m.COUNTRY_ID)*@
+                 @Html.DropDownListFor(m => m.COUNTRY_ID, new SelectList(Model.country_list, "COUNTRY_ID", "COUNTRY_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </td>
+           @*<td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.COUNTRY_ID)
+            </td>*@
+
+           
+           <td align="left">Contact Person Email: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.BBR_CONTACTPERSONEMAIL)
+                </td>
+                <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.BBR_CONTACTPERSONEMAIL)
+            </td>
+                      
+           </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+               @* <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>*@
+                 <td colspan="5" align="center"><input type="submit" value="ADD" />
+                 <input type="button" value="CLEAR" onclick="location.href='@Url.Action("branch_setup", "Home")'" />
+                 </td>
+            </tr>
+        </table>
+    
+     </th>
+      </tr>
+        </table>
+    
+
+
+    
+    }
+
+</div>
+
+<table>
+<tr><td></td></tr><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr>
+</table>
+
+
+
+
+
+@{
+    var grid = new WebGrid(Model.branch_setup_list, rowsPerPage: 50);
+}
+<div id="gridContent" align="left"  >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+  grid.Column("ID", format: @<text><span  class="display-mode">@item.BBR_ID</span> <label id="branch_id" class="edit-mode">@item.BBR_ID</label> </text>, style: "col1Width"),
+  grid.Column("BBR_NAME", "Branch Name", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_bbr_name"   >@item.BBR_NAME</label> </span> <input type="text" id="txt_bbr_name" value="@item.BBR_NAME" class="edit-mode" /></text>,style:"col1Width"),
+  @*grid.Column("Bank_Name", "Name", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_name"   >@item.BANK_NAME</label> </span> 
+  <input type="text" id="txt_name" value="@item.BANK_NAME" class="edit-mode" />
+  </text>,style: "col1Width"),
+  *@
+ grid.Column("Bank_Name","Bank Name", format: @<text>  <span  class="display-mode" style="font:size 8px"> <label id="lbl_name" >@item.BANK_NAME</label> </span>
+    <span class="nodisplay"> <label id="lbl_name_INDEX">@item.BANK_ID</label> </span>
+
+@Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_setup_list, "BANK_ID", "BANK_NAME", @item.BANK_ID), new { id = "txt_name", @class = "edit-mode" })
+</text>, style: "col1Width"),
+    grid.Column("BBR_CODE", "Code", format: @<text> <span  class="display-mode"> <label id="lbl_bbrcode">@item.BBR_CODE</label> </span>  <input type="text" id="txt_bbrcode" value="@item.BBR_CODE" class="edit-mode" /> </text>, style: "col1Width"),
+      grid.Column("BBR_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_status">@item.BBR_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_status" class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@ 
+    <select class="edit-mode" id="txt_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+
+     </text>, style: "col1Width"),
+@*grid.Column("Bank_Code", "CODE", format: @<text> <span  class="display-mode"> <label id="lbl_code">@item.Bank_Code</label> </span>  <input type="text" id="txt_code" value="@item.Bank_Code" class="edit-mode" /> </text>, style: "col1Width"),*@
+
+ grid.Column("BBR_ISISLAMIC", "Is Islamic", format: @<text> <span  class="display-mode"> <label id="lbl_is_islamic">@item.BBR_ISISLAMIC</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       @*<input list="colors1"  id="txt_is_islamic" class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+    <select class="edit-mode" id="txt_is_islamic">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select>
+
+
+    </text>, style: "col2Width"),
+
+  grid.Column("BBR_SWIFTCODE", "Swift Code", format: @<text> <span  class="display-mode"> <label id="lbl_swift_code">@item.BBR_SWIFTCODE</label> </span>  <input type="text" id="txt_swift_code" value="@item.BBR_SWIFTCODE" class="edit-mode" /> </text>, style: "col1Width"),
+
+
+    @*grid.Column("BNKTYPE_NAME", "Type", format: @<text> <span  class="display-mode"> <label id="lbl_bank_type">@item.BNKTYPE_NAME</label> </span>  *@
+@*<input type="text" id="txt_bank_type" value="@item.BNKTYPE_NAME" class="edit-mode" /> *@
+
+        //@Html.DropDownListFor(m => m.BNKTYPE_ID, new SelectList(Model.bank_type_list, "BNKTYPE_ID", "BNKTYPE_NAME"), new { id = "txt_bank_type", @class = "edit-mode" })
+
+         //</text>, style: "col1Width"),
+
+
+    @*grid.Column("RATING_NAME", "Rating", format: @<text> <span  class="display-mode"> <label id="lbl_rating_name">@item.RATING_NAME</label> </span>  *@
+@*<input type="text" id="txt_rating_name" value="@item.RATING_NAME" class="edit-mode" /> *@
+  
+        //  @Html.DropDownListFor(m => m.RATING_ID, new SelectList(Model.rating_list, "RATING_ID", "RATING_NAME"), new { id = "txt_rating_name", @class = "edit-mode" })
+
+         //</text>, style: "col1Width"),
+
+ grid.Column("BBR_ADDRESSLINE1", "Addressline 1", format: @<text> <span  class="display-mode"> <label id="lbl_address1">@item.BBR_ADDRESSLINE1</label> </span>  <input type="text" id="txt_address1" value="@item.BBR_ADDRESSLINE1" class="edit-mode" /> </text>, style: "col1Width"),
+ grid.Column("BBR_ADDRESSLINE2", "Addressline 2", format: @<text> <span  class="display-mode"> <label id="lbl_address2">@item.BBR_ADDRESSLINE2</label> </span>  <input type="text" id="txt_address2" value="@item.BBR_ADDRESSLINE2" class="edit-mode" /> </text>, style: "col1Width"),
+ grid.Column("COUNTRY_NAME", "Country", format: @<text> <span  class="display-mode"> <label id="lbl_countryname">@item.COUNTRY_NAME</label> </span>  
+ <span class="nodisplay"> <label id="lbl_Countryname_name_INDEX">@item.COUNTRY_ID</label> </span>
+@Html.DropDownListFor(m => m.COUNTRY_ID, new SelectList(Model.country_list, "COUNTRY_ID", "COUNTRY_NAME",@item.COUNTRY_ID), new { id = "txt_countryname", @class = "edit-mode" })
+
+</text>, style: "col1Width"),
+
+grid.Column("STATE_NAME", "State", format: @<text> <span  class="display-mode"> <label id="lbl_statename">@item.STATE_NAME</label> </span>  
+    <span class="nodisplay"> <label id="lbl_statename_INDEX">@item.STATE_ID</label> </span>
+@Html.DropDownListFor(m => m.STATE_ID, new SelectList(Model.state_list,"STATE_ID","STATE_NAME",@item.STATE_ID), new { id = "txt_statename", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+grid.Column("CITY_NAME", "City", format: @<text> <span  class="display-mode"> <label id="lbl_cityname">@item.CITY_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_cityname_INDEX">@item.CITY_ID</label> </span>
+
+@Html.DropDownListFor(m => m.CITY_ID, new SelectList(Model.city_list,"CITY_ID","CITY_NAME",@item.CITY_ID), new { id = "txt_cityname", @class = "edit-mode" })
+</text>, style: "col1Width"),
+
+grid.Column("BBR_PHONES", "Phone#", format: @<text> <span  class="display-mode"> <label id="lbl_bbr_phone">@item.BBR_PHONES</label> </span>  <input type="text" id="txt_bbr_phone" value="@item.BBR_PHONES" class="edit-mode" /> </text>, style: "col1Width"),
+grid.Column("BBR_FAX", "Fax#", format: @<text> <span  class="display-mode"> <label id="lbl_bbr_fax">@item.BBR_FAX</label> </span>  <input type="text" id="txt_bbr_fax" value="@item.BBR_FAX" class="edit-mode" /> </text>, style: "col1Width"),   
+@*grid.Column("BANK_EMAIL", "EMAIL", format: @<text> <span  class="display-mode"> <label id="lbl_bankemail">@item.BANK_EMAIL</label> </span>  <input type="text" id="txt_bankemail" value="@item.BANK_EMAIL" class="edit-mode" /> </text>, style: "col1Width"),*@
+    
+@*grid.Column("BANK_WEBSITE", "WEBSITE", format: @<text> <span  class="display-mode"> <label id="lbl_bankwebsite">@item.BANK_WEBSITE</label> </span>  <input type="text" id="txt_bankwebsite" value="@item.BANK_WEBSITE" class="edit-mode" /> </text>, style: "col1Width"),*@
+   
+ grid.Column("BBR_CONTACTPERSONNAME","Contact Name", format: @<text> <span  class="display-mode"> <label id="lbl_personname">@item.BBR_CONTACTPERSONNAME</label> </span>  <input type="text" id="txt_personname" value="@item.BBR_CONTACTPERSONNAME" class="edit-mode" /></text>, style: "col1Width"),
+ grid.Column("BBR_CONTACTPERSONMOBILE","Contact Mobile", format: @<text> <span  class="display-mode"> <label id="lbl_personmobile">@item.BBR_CONTACTPERSONMOBILE</label> </span>  <input type="text" id="txt_personmobile" value="@item.BBR_CONTACTPERSONMOBILE" class="edit-mode" /></text>, style: "col1Width"),
+ grid.Column("BBR_CONTACTPERSONEMAIL","Contact Email", format: @<text> <span  class="display-mode"> <label id="lbl_personemail">@item.BBR_CONTACTPERSONEMAIL</label> </span>  <input type="text" id="txt_personemail" value="@item.BBR_CONTACTPERSONEMAIL" class="edit-mode" /></text>, style: "col1Width"),
+
+                         grid.Column("", format: @<text>
+            <button class="edit-user display-mode" >Edit</button>
+            <button class="save-user edit-mode"  >Save</button>
+            <button class="cancel-user edit-mode" >Cancel</button>
+        </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+
+<div align="center">
+@using (Html.BeginForm("ExportData_branch_setup", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>
+
+
+
+
+
+
+

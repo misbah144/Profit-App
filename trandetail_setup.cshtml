@@ -1,0 +1,323 @@
+﻿@model DAP.Models.Trandetail
+
+@{
+    ViewBag.Title = "trandetail_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 10px;
+        font-weight: bold;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 100px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+.col3Width
+    {
+        width: 10px;
+    }
+ .col4Width
+    {
+        width: 50px;
+    }
+  .col5Width
+    {
+        width: 110px;
+    }
+
+    .col6Width
+    {
+        width: 300px;
+    }
+
+
+.nodisplay {
+            display: none;
+        }
+
+</style>
+<script type="text/javascript" >
+
+    $(function () {
+        $('.edit-mode').hide();               // edit function is changed for trandetail to go directly to code so no need for save button
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            //var  = tr.find("#bankid").html();
+            var fbacc_id = tr.find("#txt_fbacc_id").val();
+            var ptrate_percent = tr.find("#txt_ptrate_percent").val();
+            var txnd_amount = tr.find("#txt_txnd_amount").val();
+            //            var FUND_ID = tr.find("#txt_fund_name").val();
+            var profit = tr.find("#txt_profit").val();
+            var value_date = tr.find("#txt_value_date").val();
+            tr.find('.edit-mode, .display-mode').toggle();
+            var trandetail =
+            {
+                "fbacc_id": fbacc_id,
+                "ptrate_percent": ptrate_percent,
+                "txnd_amount": txnd_amount,
+                "profit": profit,
+                "value_date": value_date
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_trandetail/',
+                data: JSON.stringify(trandetail),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/trandetail_fund_setup/';
+                }
+            });
+            
+            
+            
+            
+            //var tr = $(this).parents('tr:first');          
+          //  tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+
+        $(function () {
+            $(txt_txnd_amount).blur(function () {
+               
+                var tr = $(this).parents('tr:first');
+                var value = parseInt($(this).val());
+                var newValue = (value *.01* parseFloat(tr.find('#txt_ptrate_percent').val()))/365
+                //                var tr = $(this).parents('tr:first');
+                tr.find('#txt_profit').val(newValue.toFixed(2));
+            });
+        });
+
+
+        /////////////////////////////
+         $(function () {
+        $('#post_all').click(function(){
+
+          var tr = $(this).parents('tr:first');
+            //var  = tr.find("#bankid").html();
+            var fbacc_id = tr.find("#txt_fbacc_id").val();
+//            var ptrate_percent = tr.find("#txt_ptrate_percent").val();
+//            var txnd_amount = tr.find("#txt_txnd_amount").val();
+//            //            var FUND_ID = tr.find("#txt_fund_name").val();
+//            var profit = tr.find("#txt_profit").val();
+            var value_date = tr.find("#txt_value_date").val();
+          //  tr.find('.edit-mode, .display-mode').toggle();
+            var trandetail =
+            {
+                "fbacc_id": fbacc_id,
+//                "ptrate_percent": ptrate_percent,
+//                "txnd_amount": txnd_amount,
+//                "profit": profit,
+                "value_date": value_date
+            };
+
+
+         
+         
+         
+          $.ajax({
+                url: '/DAP/Home/bulk_post/',
+                data: JSON.stringify(trandetail),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/trandetail_fund_setup/';
+                }
+            });
+      
+    
+    
+    
+    });
+  });
+
+
+
+
+
+
+
+        //////////////////////////
+
+
+
+        $('.save-user').on('click', function () {
+
+            var tr = $(this).parents('tr:first');
+            //var  = tr.find("#bankid").html();
+            var fbacc_id = tr.find("#txt_fbacc_id").val();
+            var ptrate_percent = tr.find("#txt_ptrate_percent").val();
+            var txnd_amount = tr.find("#txt_txnd_amount").val();
+            //            var FUND_ID = tr.find("#txt_fund_name").val();
+            var profit = tr.find("#txt_profit").val();
+            var value_date = tr.find("#txt_value_date").val();
+            tr.find('.edit-mode, .display-mode').toggle();
+            var trandetail =
+            {
+                "fbacc_id": fbacc_id,
+                "ptrate_percent": ptrate_percent,
+                "txnd_amount": txnd_amount,
+                "profit": profit,
+                "value_date": value_date
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_trandetail/',
+                data: JSON.stringify(trandetail),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/trandetail_setup/';
+                }
+            });
+
+        });
+    })
+
+
+</script>
+
+<h2>Trandetail Setup</h2>
+
+
+@*@using (Html.BeginForm("bulk_update", "Home", FormMethod.Post))
+{
+   <table align="right">
+   <tr>
+    
+   <td colspan="2" align="right"><input type="submit" value="Bulk Update" /></td>
+   </tr>
+   </table>
+}*@
+
+
+@*   <table align="right" >
+   <tr>
+    
+   <td colspan="2" align="right"><input type="submit" value="Bulk_Post" id="post_all" /></td>
+   </tr>
+   </table>
+*@
+
+
+@{
+    var grid = new WebGrid(Model.trandetail_list, rowsPerPage: 50);
+}
+
+
+<div id="gridContent" align="left"  >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+          @*grid.Column("PTRATE_ID", format: @<text><span  class="display-mode">@item.PTRATE_ID</span> <label id="bankid" class="edit-mode">@item.PTRATE_ID</label> </text>, style: "col1Width"),*@
+ 
+
+ grid.Column("fund_name", "Funds", format: @<text> <span  class="display-mode"> <label id="lbl_fund_name">@item.fund_name</label> </span>
+ @Html.DropDownListFor(m => m.fund_id, new SelectList(Model.trandetail_list, "fund_id", "fund_name"), new { id = "txt_fund_name", @class = "edit-mode" })
+
+@*<input type="text" id="txt_fund_name" value="@item.fund_name" class="edit-mode"  /> *@
+</text>, style: "col2Width"),
+
+grid.Column("bank_name", "Bank_Name", format: @<text> <span  class="display-mode"> <label id="lbl_bank_name">@item.bank_name </label> </span>  <input type="text" id="txt_bank_name" value="@item.bank_name" class="edit-mode" /> </text>, style: "width:180px;"),
+    grid.Column("bbr_name", "Branches", format: @<text> <span  class="display-mode"> <label id="lbl_bbr_name">@item.bbr_name</label> </span>  <input type="text" id="txt_bbr_name" value="@item.bbr_name" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("fbacc_number", "Account No", format: @<text> <span  class="display-mode"> <label id="lbl_fbacc_number">@item.fbacc_number</label> </span>  <input type="text" id="txt_fbacc_number" value="@item.fbacc_number" class="edit-mode" /> </text>, style: "col1Width"),
+    grid.Column("txnd_amount", "Amount", format:
+    @<text> 
+<span  class="display-mode"></span>  
+<input type="text" id="txt_txnd_amount" value="@item.txnd_amount"  style="width:80px; font-size:10px; font-weight:bold;font-family: Arial,Helvetica,sans-serif" /> </text>, style: "col1Width"),
+
+ grid.Column("last_postDate","Last_Value_Date",format: @<text> <span  class="display-mode"> <label id="lbl_last_postDate">@item.last_valueDate</label> </span>  
+ <input type="text" id="txt_last_postDate" value="@item.ptrate_percent" class="edit-mode" /> </text>, style: "col5Width"),
+
+ grid.Column("ptrate_percent", "Percent", format: @<text> <span  class="display-mode"> <label id="lbl_ptrate_percent">@item.ptrate_percent</label> </span>  <input type="text" id="txt_ptrate_percent" value="@item.ptrate_percent" class="edit-mode" /> </text>, style: "col1Width"),
+           grid.Column("profit", "Profit", format: @<text> 
+<span  class="display-mode">  </span>  
+<input type="text" id="txt_profit" value="@item.profit" style="width:60px; font-size:10px; font-weight:bold;font-family: Arial,Helvetica,sans-serif" /> 
+</text>, style: "col2Width"),
+
+grid.Column("txnd_l_amount", "TXND Amount", format: @<text> <span  class="display-mode"> <label id="lbl_txnd_l_amount">@item.txnd_l_amount</label> </span>  <input type="text" id="txt_txnd_l_amount" value="@item.txnd_l_amount" class="edit-mode" /> </text>, style: "col1Width"),
+grid.Column("value_date", "Value_Date", format: @<text> <span  class="display-mode"> <label id="lbl_value_date">@item.value_date</label> 
+    </span>  <input type="text" id="txt_value_date" value="@item.value_date" class="edit-mode" /> </text>, style: "col1Width"),
+
+grid.Column("postDate", "Post_Date", format: @<text> <span  class="display-mode"> <label id="lbl_postDate">@item.postDate</label> 
+    </span>  <input type="text" id="txt_postDate" value="@item.postDate" class="edit-mode" /> </text>, style: "col1Width"),
+
+
+
+      @*  grid.Column(null, null, format:
+        @<input type="hidden" id="txt_txnd_id" value="@item.txnd_id"/>, style: "nodisplay"),*@
+  @*  grid.Column(null, null, format: @<text> 
+<input type="hidden" id="txt_txnmstr_id" value="@item.txnmstr_id" /> </text>, style: "nodisplay"),*@
+ grid.Column(null, null, format: @<text> 
+<input type="hidden" id="txt_fbacc_id" value="@item.fbacc_id" /> </text>, style: "nodisplay"),
+   @* grid.Column(null, null, format: @<text> 
+<input type="hidden" id="txt_txnd_status" value="@item.txnd_status" /> </text>, style: "nodisplay"),
+    grid.Column(null, null, format: @<text> 
+<input type="hidden" id="txt_txnd_postedon" value="@item.txnd_postedon" /> </text>, style: "nodisplay"),*@
+
+
+
+
+
+ grid.Column("", format: @<text>
+            <button class="edit-user display-mode" >UPDATE</button>
+            <button class="save-user edit-mode"  >Save</button>
+            <button class="cancel-user edit-mode" >Cancel</button>
+        </text>, style: "col3Width", canSort: false)
+           ))
+
+</div>
+

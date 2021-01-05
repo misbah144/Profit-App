@@ -1,0 +1,299 @@
+﻿@model DAP.Models.ProfitFrequency_Setup
+
+@{
+    ViewBag.Title = "profitfrequency_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var PFRQ_NAME = tr.find("#txt_typename").val();
+            var PFRQ_SHORTNAME = tr.find("#txt_shortname").val();
+            var PFRQ_STATUS = tr.find("#txt_type_status").val();
+            var PFRQ_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var PFRQ_ID = tr.find("#banktypeid").html();
+
+            ///////////////////////
+
+            if (PFRQ_NAME == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (PFRQ_SHORTNAME == "") {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (PFRQ_STATUS == "") {
+                alert("Status  Required");
+                return false;
+            }
+
+            if (PFRQ_STATUS != "ACTIVE" && PFRQ_STATUS != "INACTIVE") {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+
+
+            
+            
+            if (PFRQ_ISDEFAULT == "") {
+                alert("IS DEFAULT  Required");
+                return false;
+            }
+
+            if (PFRQ_ISDEFAULT != "TRUE" && PFRQ_ISDEFAULT != "FALSE") {
+                alert("Kindly provide Default Value in correct format");
+                return false;
+            }
+
+
+
+
+
+
+            /////////////////////////////
+
+
+
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+            tr.find('.edit-mode, .display-mode').toggle();
+            var ProfitFrequency_Setup =
+            {
+                "PFRQ_ID": PFRQ_ID,
+                "PFRQ_NAME": PFRQ_NAME,
+                "PFRQ_SHORTNAME": PFRQ_SHORTNAME,
+                "PFRQ_STATUS": PFRQ_STATUS,
+                "PFRQ_ISDEFAULT": PFRQ_ISDEFAULT
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_profitfrequency/',
+                data: JSON.stringify(ProfitFrequency_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/profitfrequency_setup/';
+
+                }
+            });
+
+        });
+    })
+</script>
+
+<h2>Profit Frerquency Setups</h2>
+<div align="center"> 
+@using (Html.BeginForm("profitfrequency_setup", "Home", FormMethod.Post))
+    {
+       
+     <table>
+            <tr>
+                <th>
+     <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.PFRQ_NAME)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.PFRQ_NAME)
+            </td>
+            
+            </tr>
+            <tr>
+                <td align="left">Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.PFRQ_SHORTNAME)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.PFRQ_SHORTNAME)
+            </td>
+            </tr>
+       <tr>
+                <td align="left">Status: </td>
+                <td align="left">
+                    @Html.DropDownListFor(m => m.PFRQ_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                     )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.PFRQ_STATUS)
+            </td>            
+            </tr>            
+               @*<tr>
+                <td>Rating Status: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.rating_status)
+                </td>
+            </tr>*@
+            <tr>
+                <td align="left">Is Default: </td>
+                <td align="left">                  
+                  @Html.CheckBoxFor(m =>m.PFRQ_ISDEFAULT_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td colspan="2" align="left"><input type="submit" value="ADD" />
+                <input type="button" value="Clear" onclick="location.href='@Url.Action("profitfrequency_setup", "Home")'"/>
+                </td>
+            </tr>
+        </table>
+    </th>
+      </tr>
+        </table>
+       
+    }
+
+</div>
+
+
+
+
+@{
+    var grid = new WebGrid(Model.profit_frequency_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+     grid.Column("ID", format: @<text>  <span  class="display-mode">@item.PFRQ_ID</span> <label id="banktypeid" class="edit-mode">@item.PFRQ_ID</label> </text>, style: "col1Width" ),
+    grid.Column("PFRQ_NAME", "Name", format: @<text>  <span  class="display-mode"> <label id="lbl_type_name"  >@item.PFRQ_NAME</label> </span> <input type="text" id="txt_typename" value="@item.PFRQ_NAME" class="edit-mode" /></text>, style: "col2Width"),
+     grid.Column("PFRQ_SHORTNAME", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbl_shortname">@item.PFRQ_SHORTNAME</label> </span>  <input type="text" id="txt_shortname" value="@item.PFRQ_SHORTNAME" class="edit-mode" /> </text>, style: "col2Width"),
+     grid.Column("PFRQ_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_typestatus">@item.PFRQ_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_type_status"  class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@ 
+    <select class="edit-mode" id="txt_type_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+     </text>, style: "col2Width"),
+
+
+     grid.Column("PFRQ_ISDEFAULT", "Is Default", format: @<text> <span  class="display-mode"> <label id="lbl_default">@item.PFRQ_ISDEFAULT</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       
+    @*<input list="colors1"  id="txt_type_isdefault"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@ 
+    <select class="edit-mode" id="txt_type_isdefault">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select> 
+    </text>, style: "col2Width"),
+
+       grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+<div align="center">
+@using (Html.BeginForm("ExportData_profitfrequency_setup", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>

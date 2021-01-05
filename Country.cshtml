@@ -1,0 +1,286 @@
+﻿@model DAP.Models.Country
+
+@{
+    ViewBag.Title = "Country";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .edit-mode { }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 500px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+.col3Width
+    {
+        width: 70px;
+    }
+</style>
+
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        //        $("#post_button").on('click', function () {
+        //            //            $("#comp_name").val($(this).find("option:selected").text());
+
+        //            var a = document.getElementById("ddl_compname");
+        //            //        var strUser = e.options[e.selectedIndex].value;
+        //            var va = a.options[a.selectedIndex].text;
+
+        //            var b = document.getElementById("ddl_fundshortname");
+        //            //        var strUser = e.options[e.selectedIndex].value;
+        //            var vb = b.options[b.selectedIndex].text;
+
+        //            $("#comp_name").val(va);
+        //            $("#fund_name_short").val(vb);
+
+
+
+        //        });
+
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var name = tr.find("#txt_countryname").val();
+            var shortname = tr.find("#txt_country_shortname").val();
+            var COUNTRY_STATUS = tr.find("#txt_country_status").val();
+//            var rating_isdefault = tr.find("#txt_rating_isdefault").val();
+           var id = tr.find("#countryid").html();
+
+
+            ///////////////////////
+
+            if (name == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (shortname == "") {
+                alert("SHORT Name Required");
+                return false;
+            }
+            
+            /////////////////////////////           
+            tr.find("#lblcountryname").text(txt_countryname);
+            tr.find("#lblcountryshortname").text(txt_country_shortname);
+          tr.find("#lblcountry_status").text(txt_country_status);
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var Country =
+            {
+                "id": id,
+                "name": name,
+                "sname": shortname,
+                "COUNTRY_STATUS": COUNTRY_STATUS
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_Country/',
+                data: JSON.stringify(Country),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/Country/';   // used to redirect or load page 
+
+                }
+            });
+
+        });
+    })
+</script>
+
+
+
+<h2>Country</h2>
+
+
+
+<div align="center"> 
+@using (Html.BeginForm("Country", "Home", FormMethod.Post))
+    {
+       <table>
+            <tr>
+                <th>  
+    
+      <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>
+            <tr>
+                <td align="left">Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.name)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.name)
+            </td>
+            </tr>
+            
+            <tr>
+                <td align="left">Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.sname)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.sname)
+            </td>
+            
+            </tr>
+            
+       <tr>
+                <td align="left">Status: </td>
+                 <td align="left">
+                    @Html.DropDownListFor(m => m.COUNTRY_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                    )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.COUNTRY_STATUS)
+            </td>            
+            </tr>   
+
+
+
+
+            <tr>
+                <td></td>
+                 <td colspan="2" align="left"><input type="submit" value="Add" />
+                 <input type="button" value="Clear" onclick="location.href='@Url.Action("Country","Home")'" />
+                 </td>
+                 
+
+            </tr>
+        </table>
+    
+    </th>
+      </tr>
+        </table>
+
+
+    
+    }
+
+</div>
+
+
+
+
+
+
+
+@{
+    var grid = new WebGrid(Model.country_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+    grid.Columns(
+    grid.Column("Id","ID", format: @<text>  <span  class="display-mode">@item.id</span><label id="countryid" class="edit-mode">@item.id</label> </text>, style: "col1Width"),
+    grid.Column("name","Name", format: @<text>  <span  class="display-mode"> <label id="lblcountryname">@item.name</label> </span> <input type="text" id="txt_countryname" value="@item.name" class="edit-mode" /></text>, style: "col2Width"),
+    grid.Column("sname", "Short Name", format: @<text> <span  class="display-mode"> <label id="lblcountryshortname">@item.sname</label> </span>  <input type="text" id="txt_country_shortname" value="@item.sname" class="edit-mode" /> </text>, style: "col2Width"),
+        grid.Column("Country_status", "Status", format: @<text> <span  class="display-mode"> <label id="lblcountry_status">@item.country_status</label> </span>   
+    
+    @*<input list="colors"  id="txt_country_status" class="edit-mode" />
+    <datalist id="colors">
+  <option value="ACTIVE">
+  <option value="INACTIVE">  
+</datalist>*@  
+    <select class="edit-mode" id="txt_country_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+    
+    </text>, style: "col2Width"),   
+
+
+
+    
+   @* grid.Column("rating_status", "Status", format: @<text> <span  class="display-mode"> <label id="lblrating_status">@item.rating_status</label> </span>   
+    <input list="colors"  id="txt_rating_status" class="edit-mode" />
+    <datalist id="colors">
+  <option value="ACTIVE">
+  <option value="INACTIVE">  
+</datalist>  </text>, style: "col2Width"),*@
+
+
+
+   @* grid.Column("rating_isdefault", "Is Default", format: @<text> <span  class="display-mode"> <label id="lblrating_default">@item.rating_isdefault</label> </span>    
+    <input list="colors1"  id="txt_rating_isdefault" class="edit-mode" />
+    <datalist id="colors1">
+  <option  value="TRUE">
+  <option value="FALSE">  
+</datalist> 
+
+
+             
+             </text>, style: "col2Width"),*@
+ grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Update</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>, style: "col3Width", canSort: false)
+           ))
+
+</div>

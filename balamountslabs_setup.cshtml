@@ -1,0 +1,411 @@
+﻿@model DAP.Models.BalamountSlabs_Setup
+
+@{
+    ViewBag.Title = "balamountslabs_setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style type="text/css">
+    .edit-mode 
+    { 
+        font-size: 10px;
+    width:80px;        
+    font-family: Arial,Helvetica,sans-serif;
+        
+    }
+    .edit-user{}
+    .edit-user display-mode{}
+    .save-user edit-mode{}
+    .display-mode{}
+    .cancel-user{}
+    .webgrid-table
+    {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;        
+    }
+    .webgrid-table td, th
+    {
+        border: 1px solid #C5C5C5;
+        padding: 3px 7px 2px;
+    }
+    .webgrid-header, .webgrid-header a
+    {
+        background-color: #E3E3E3;
+        color: black;
+        text-align: left;
+        text-decoration:none;
+    }
+    .webgrid-footer
+    {
+    }
+    .webgrid-row-style
+    {
+        padding: 3px 7px 2px;
+         
+    }
+    .webgrid-alternating-row
+    {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+    .col1Width
+    {
+        width: 50px;
+    }
+    .col2Width
+    {
+        width: 200px;
+    }
+     .col3Width
+    {
+        width: 30px;
+    }
+     .col4Width
+    {
+        width: 190px;
+    }
+    .nodisplay {
+        display: none;
+    }
+
+
+</style>
+<script type="text/javascript" >
+    $(function () {
+        $('.edit-mode').hide();
+        $('.edit-user, .cancel-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit-mode, .display-mode').toggle();
+        });
+
+        $('.save-user').on('click', function () {
+            var tr = $(this).parents('tr:first');
+            var SLAB_NAME = tr.find("#txt_typename").val();
+            var SLAB_SHORTNAME = tr.find("#txt_shortname").val();
+            var SLAB_STATUS = tr.find("#txt_type_status").val();
+            var SLAB_ISDEFAULT = tr.find("#txt_type_isdefault").val();
+            var SLAB_AMOUNTFROM = tr.find("#txt_amountfrom").val();
+            var SLAB_AMOUNTTO = tr.find("#txt_amountto").val();
+            var SLAB_ID = tr.find("#banktypeid").html();
+            var BANK_ID = tr.find("#txt_bank_name").val();
+            ///////////////////////
+
+            if (SLAB_NAME == "") {
+                alert("Name Required");
+                return false;
+            }
+            if (SLAB_SHORTNAME == "") {
+                alert("SHORT Name Required");
+                return false;
+            }
+            if (SLAB_STATUS == "" || (SLAB_STATUS != "INACTIVE" && SLAB_STATUS != "ACTIVE")) {
+                alert("Status  Required");
+                return false;
+            }
+
+            if (SLAB_STATUS != "ACTIVE" && SLAB_STATUS != "INACTIVE") {
+                alert("Kindly provide Status in correct format");
+                return false;
+            }
+
+            //var re_cd = /^[1-9][0-9]{1,10}$/;
+
+
+            var re_cd = /^(0|[1-9][0-9]*)$/;
+
+
+            if (SLAB_AMOUNTFROM == "") {
+                alert("AMOUNTFROM Required");
+                return false;
+            }
+            if (SLAB_AMOUNTTO == "") {
+                alert("AMOUNTTO Required");
+                return false;
+            }
+
+            if (re_cd.test(String(SLAB_AMOUNTFROM).toLowerCase()) == false) {
+                alert("Required Correct  AMOUNTFROM");
+                return false;
+            }
+
+            if (re_cd.test(String(SLAB_AMOUNTTO).toLowerCase()) == false) {
+                alert("Required Correct  AMOUNTTO");
+                return false;
+            }
+
+            if ((parseFloat(SLAB_AMOUNTFROM)) > (parseFloat(SLAB_AMOUNTTO))) 
+            {
+                alert("Required Correct  AMOUNTFROM Range");
+                return false;            
+            }
+
+            if (SLAB_ISDEFAULT == "") {
+                alert(" IS DEFAULT Required");
+                return false;
+            }
+
+            if (SLAB_ISDEFAULT != "TRUE" && SLAB_ISDEFAULT != "FALSE") 
+            {
+                alert("Kindly provide Default Value in correct format");
+                return false;
+            }
+
+
+
+
+
+
+            //////////////////////
+
+
+
+
+            tr.find("#lbl_type_name").text(txt_typename);
+            tr.find("#lbl_shortname").text(txt_shortname);
+            tr.find("#lbl_typestatus").text(txt_type_status);
+            tr.find("#lbl_default").text(txt_type_isdefault);
+
+            tr.find("#lbl_amountfrom").text(txt_amountfrom);
+            tr.find("#lbl_amountto").text(txt_amountto);
+            tr.find("#lbl_bank_name").text(txt_bank_name);
+
+
+
+            tr.find('.edit-mode, .display-mode').toggle();
+            var BalamountSlabs_Setup =
+            {
+                "SLAB_ID": SLAB_ID,
+                "SLAB_NAME": SLAB_NAME,
+                "SLAB_SHORTNAME": SLAB_SHORTNAME,
+                "SLAB_STATUS": SLAB_STATUS,
+                "SLAB_ISDEFAULT": SLAB_ISDEFAULT,
+                "SLAB_AMOUNTFROM": SLAB_AMOUNTFROM,
+                "SLAB_AMOUNTTO": SLAB_AMOUNTTO,
+                "BANK_ID":BANK_ID
+            };
+            $.ajax({
+                url: '/DAP/Home/edit_balamountslabs/',
+                data: JSON.stringify(BalamountSlabs_Setup),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data);
+                    window.location.href = '/DAP/Home/balamountslabs_setup/';
+
+                }
+            });
+
+        });
+    })
+</script>
+@*<h2>balamountslabs_setup</h2>*@
+
+<h2>Balance Amount Slab Setup</h2>
+
+<div align="center"> 
+@using (Html.BeginForm("balamountslabs_setup", "Home", FormMethod.Post))
+    {
+    
+     <table>
+            <tr>
+                <th>        
+     <table cellpadding="3" cellspacing="3">
+            <tr>
+                <th colspan="2" style="background-color:gray;" align="left">Entry Form</th>
+            </tr>            
+            <tr>
+              <td align="left"> Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.SLAB_NAME)
+                </td>
+             <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.SLAB_NAME)
+            </td>            
+            </tr>
+            <tr>
+               <td align="left">Short Name: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.SLAB_SHORTNAME)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.SLAB_SHORTNAME)
+            </td>
+            </tr>
+         <tr>
+               <td align="left"> Amount From: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.SLAB_AMOUNTFROM)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.SLAB_AMOUNTFROM)
+            </td>
+            </tr>
+       
+        <tr>
+                <td align="left"> Amount To: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.SLAB_AMOUNTTO)
+                </td>
+            <td style="color: #FF0000">*            
+             @Html.ValidationMessageFor(m=>m.SLAB_AMOUNTTO)
+            </td>
+            </tr>
+
+         <tr>
+             <td align="left"> Bank: </td>             
+             <td align="left">
+                 @Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME"), new { id = "yourElementIdIfAny", @class = "yourClassNameIfAny" })
+             </td>
+             <td style="color: #FF0000">
+                 @Html.ValidationMessageFor(m => m.BANK_ID)
+             </td>
+         </tr>
+
+
+
+
+     
+       <tr>
+               <td align="left"> Status: </td>
+                <td align="left">
+                    @Html.DropDownListFor(m => m.SLAB_STATUS, new List<SelectListItem>
+                   { new SelectListItem{Text="ACTIVE", Value="ACTIVE"},
+                     new SelectListItem{Text="INACTIVE", Value="INACTIVE"}}
+                     //new SelectListItem{Text="A+", Value="A+"},
+                     //new SelectListItem{Text="AA", Value="AA"},
+                     //new SelectListItem{Text="A", Value="A"},
+                     //new SelectListItem{Text="   ", Value="NULL"}},
+                     //new SelectListItem{Text="Canada", Value="Canada"}},
+                     )
+                </td>
+            <td style="color: #FF0000">            
+             @Html.ValidationMessageFor(m=>m.SLAB_STATUS)
+            </td>            
+            </tr>            
+               @*<tr>
+                <td>Rating Status: </td>
+                <td>
+                    @Html.TextBoxFor(m =>m.rating_status)
+                </td>
+            </tr>*@
+            <tr>
+                <td align="left">Is Default: </td>
+               <td align="left">                 
+                  @Html.CheckBoxFor(m =>m.SLAB_ISDEFAULT_BOOL, true)                  
+                  @*  @Html.TextBoxFor(m =>m.rating_isdefault)*@
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td colspan="2" align="left"><input type="submit" value="ADD" />
+                <input type="button" value="CLEAR" onclick="location.href='@Url.Action("balamountslabs_setup","Home")'" />
+                </td>
+            </tr>
+        </table>
+     </th>
+      </tr>
+        </table>
+    
+    }
+
+</div>
+
+
+@{
+    var grid = new WebGrid(Model.balamounts_slab_list, rowsPerPage: 50);
+}
+<div  align="center" id="gridContent" style=" padding:20px; " >
+@grid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        mode: WebGridPagerModes.All,
+        columns:
+       grid.Columns(
+     grid.Column("ID", format: @<text>  <span  class="display-mode">@item.SLAB_ID</span> <label id="banktypeid" class="edit-mode">@item.SLAB_ID</label> </text>, style: "col1Width" ),
+ grid.Column("SLAB_NAME", " Name", format: @<text>  <span  class="display-mode"> <label id="lbl_type_name"  >@item.SLAB_NAME</label> </span> <input type="text" id="txt_typename" value="@item.SLAB_NAME" class="edit-mode" /></text>, style: "col2Width"),
+ grid.Column("SLAB_SHORTNAME", "Short Name", format: @<text> <span  class="display-mode"> <label id="lbl_shortname">@item.SLAB_SHORTNAME</label> </span>  <input type="text" id="txt_shortname" value="@item.SLAB_SHORTNAME" class="edit-mode" /> </text>, style: "col2Width"),
+ grid.Column("SLAB_AMOUNTFROM", "Amount From", format: @<text> <span  class="display-mode"> <label id="lbl_amountfrom">@item.SLAB_AMOUNTFROM</label> </span>  <input type="text" id="txt_amountfrom" value="@item.SLAB_AMOUNTFROM" class="edit-mode" /> </text>, style: "col2Width"),
+ grid.Column("SLAB_AMOUNTTO", "Amount To", format: @<text> <span  class="display-mode"> <label id="lbl_amountto">@item.SLAB_AMOUNTTO</label> </span>  <input type="text" id="txt_amountto" value="@item.SLAB_AMOUNTTO" class="edit-mode" /> </text>, style: "col2Width"),
+grid.Column("BANK_NAME", "BANK NAME", format: @<text> <span  class="display-mode"> <label id="lbl_bank_name">@item.BANK_NAME</label> </span>  
+<span class="nodisplay"> <label id="lbl_bank_name_INDEX">@item.BANK_ID</label> </span>  
+@Html.DropDownListFor(m => m.BANK_ID, new SelectList(Model.bank_list, "BANK_ID", "BANK_NAME",@item.BANK_ID), new { id = "txt_bank_name", @class = "edit-mode" })
+</text>, style: "col1Width"), 
+
+
+
+
+grid.Column("SLAB_STATUS", "Status", format: @<text> <span  class="display-mode"> <label id="lbl_typestatus">@item.SLAB_STATUS</label> </span>  @*<input type="text" id="rating" value="@item.BNKTYPE_STATUS" class="edit-mode" /> </text>, style: "col2Width"),*@
+        @*<input list="colors"  id="txt_type_status"  class="edit-mode" />
+        <datalist id="colors">
+        <option value="ACTIVE">
+        <option value="INACTIVE">  
+        </datalist>*@  
+    <select class="edit-mode" id="txt_type_status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select></text>, style: "col2Width"),
+
+
+          grid.Column("SLAB_ISDEFAULT", "Is Default", format: @<text> <span  class="display-mode"> <label id="lbl_default">@item.SLAB_ISDEFAULT</label> </span>  
+       @*<input type="text" id="rating" value="@item.BNKTYPE_ISDEFAULT" class="edit-mode" /> </text>, style: "col2Width"),*@
+       @*<input list="colors1"  id="txt_type_isdefault"  class="edit-mode" />
+       <datalist id="colors1">
+      <option  value="TRUE">
+      <option value="FALSE">  
+      </datalist>*@
+    <select class="edit-mode" id="txt_type_isdefault">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+    </select> 
+
+
+     </text>, style: "col4Width"),
+
+       grid.Column("", format: @<text>
+                                <button class="edit-user display-mode" >Edit</button>
+                                <button class="save-user edit-mode"  >Save</button>
+                                <button class="cancel-user edit-mode" >Cancel</button>
+                            </text>,  style: "col3Width" , canSort: false)
+           ))
+
+</div>
+
+<div align="center">
+@using (Html.BeginForm("ExportData_balamountslabs_setup", "Home", FormMethod.Post))
+{
+    <table>
+<tr>
+<td>
+</td>
+<td align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="export_button" class="button1" value="Export"/>
+</td>
+</tr>
+</table>    
+}
+</div>
+
+
+
+
+
